@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Logo from "../assets/Logo.png"
 import notification from '../assets/notifications.png'
 import myresume from '../assets/myresume.png'
@@ -48,10 +49,13 @@ function Upload() {
           Dashboard
         </a>
 
-        <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#1d3d6f] text-white text-sm font-medium shadow-sm transition duration-150">
+   <Link
+          to="/upload"
+          className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#1d3d6f] text-white text-sm font-medium shadow-sm transition duration-150"
+        >
           <img src={myresume} alt="My Resume" className="w-5 h-5 object-contain brightness-0 invert" />
           My Resume
-        </a>
+  </Link>
 
         <a href="#" className="flex items-center gap-3 px-4 py-2 rounded-lg text-slate-400 hover:text-slate-600 text-sm font-medium transition duration-150">
           <img src={briefcase} alt="Jobs Description" className="w-5 h-5 object-contain opacity-50" />

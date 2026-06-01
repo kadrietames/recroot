@@ -11,16 +11,16 @@ import UserTypes from '../components/UserTypes'
 
 function Home() {
   return (
-    <div className='bg-white'>
-       <Navbar />
-        <Hero />
-        <Features />
-        <Stats />
-        <HowItWorks />
-        <UserTypes />
-        <Testimonials />
-        <CTA />
-        <Footer />
+    <div className="bg-white min-h-screen">
+      <Navbar />
+      <Hero />
+      <Features />
+      <Stats />
+      <HowItWorks />
+      <UserTypes />
+      <Testimonials />
+      <CTA />
+      <Footer />
     </div>
   )
 }
