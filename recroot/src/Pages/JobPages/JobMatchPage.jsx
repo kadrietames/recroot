@@ -1,16 +1,50 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
-
+import { applyForJob, getMyResumes } from '../../api/recroot'
 
 function JobMatchPage() {
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const job = state?.job
+  const score = state?.score
+  const form = state?.form
+
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleApply = async () => {
+    setLoading(true)
+    setError('')
+
+    try {
+      const resumes = await getMyResumes()
+      const resumeId = resumes[0]?.id || resumes[0]?._id
+
+      if (!resumeId) {
+        setError('No resume found. Please upload your resume first.')
+        setLoading(false)
+        return
+      }
+
+      const data = await applyForJob(job?.id || job?._id, resumeId)
+
+      if (data.error) {
+        setError('Application failed. Please try again.')
+      } else {
+        navigate('/jobs/submit', { state: { job, score, applicationId: data.id || data._id } })
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <DashboardLayout activePage="jobs">
       <div className="max-w-5xl mx-auto px-2 pt-1 pb-6 text-left">
 
-        
         <div className="w-full mb-5">
           <div className="mb-2">
             <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
@@ -23,7 +57,6 @@ function JobMatchPage() {
           </div>
         </div>
 
-        
         <div className="flex items-center justify-start gap-2 mb-6 bg-transparent py-1">
           <div className="flex items-center gap-2 shrink-0">
             <span className="w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white font-semibold text-xs">1</span>
@@ -49,10 +82,10 @@ function JobMatchPage() {
           </div>
         </div>
 
-        
+        {/* Job Header Card */}
         <div className="bg-white border border-slate-200 rounded-xl shadow-sm px-5 py-4 mb-3 flex items-center justify-between">
           <div>
-            <h2 className="text-[#0f2537] text-sm font-bold">Senior Product Designer</h2>
+            <h2 className="text-[#0f2537] text-sm font-bold">{form?.jobTitle || 'Senior Product Designer'}</h2>
             <p className="text-slate-400 text-[10px] mt-0.5">TechCrush · Lagos, Nigeria</p>
           </div>
           <div className="flex items-center gap-2">
@@ -60,32 +93,39 @@ function JobMatchPage() {
               Save
             </button>
             <button
-              onClick={() => navigate('/jobs/submit')}
-              className="bg-[#163C6B] text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:opacity-90 transition"
+              onClick={handleApply}
+              disabled={loading}
+              className={`text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition ${
+                loading ? 'bg-[#163C6B]/60 cursor-not-allowed' : 'bg-[#163C6B] hover:opacity-90'
+              }`}
             >
-              Apply Now
+              {loading ? 'Applying...' : 'Apply Now'}
             </button>
           </div>
         </div>
 
-        
+        {error && (
+          <p className="text-red-500 text-xs mb-3">{error}</p>
+        )}
+
+        {/* Match % */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-[#0f2537] text-sm font-bold">Job Overview</h3>
-          <span className="bg-emerald-100 text-emerald-600 text-[10px] font-bold px-3 py-1 rounded-full">95% match</span>
+          <span className="bg-emerald-100 text-emerald-600 text-[10px] font-bold px-3 py-1 rounded-full">
+            {score?.matchScore ? `${score.matchScore}% match` : '95% match'}
+          </span>
         </div>
 
-        
+        {/* 4 Cards Grid */}
         <div className="grid grid-cols-2 gap-3 max-w-3xl">
 
-          
           <div className="bg-transparent border border-slate-200 rounded-xl p-4 shadow-sm">
             <h3 className="text-[#0f2537] text-xs font-bold mb-2">Job Overview 🎯</h3>
             <p className="text-slate-500 text-[10px] leading-relaxed">
-              We are looking for a senior product designer to join our growing team and to lead end-to-end design of our core platform. You will work closely with product managers and engineers to craft experiences that are intuitive and beautiful.
+              {job?.description || 'We are looking for a senior product designer to join our growing team and to lead end-to-end design of our core platform.'}
             </p>
           </div>
 
-          
           <div className="bg-transparent border border-slate-200 rounded-xl p-4 shadow-sm">
             <h3 className="text-[#0f2537] text-xs font-bold mb-2">📋 Requirements</h3>
             <ul className="text-slate-500 text-[10px] leading-relaxed space-y-1">
@@ -98,7 +138,6 @@ function JobMatchPage() {
             </ul>
           </div>
 
-          
           <div className="bg-transparent border border-slate-200 rounded-xl p-4 shadow-sm">
             <h3 className="text-[#0f2537] text-xs font-bold mb-2">Key Responsibilities 🎯</h3>
             <ul className="text-slate-500 text-[10px] leading-relaxed space-y-1">
@@ -109,7 +148,6 @@ function JobMatchPage() {
             </ul>
           </div>
 
-          
           <div className="bg-transparent border border-slate-200 rounded-xl p-4 shadow-sm">
             <h3 className="text-[#0f2537] text-xs font-bold mb-3">🎯 What We Offer</h3>
             <div className="grid grid-cols-2 gap-2">

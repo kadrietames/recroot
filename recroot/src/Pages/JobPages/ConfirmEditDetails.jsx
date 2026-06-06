@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
 
 function ConfirmEditDetails() {
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const job = state?.job
+  const score = state?.score
+
   const [form, setForm] = useState({
-    jobTitle: 'Senior Product Designer',
-    experience: '2+ years',
-    jobType: 'Remote',
-    skills: 'Prototyping, soft skills',
+    jobTitle: job?.title || 'Senior Product Designer',
+    experience: score?.experience || '2+ years',
+    jobType: score?.jobType || 'Remote',
+    skills: score?.skills || 'Prototyping, soft skills',
   })
 
   const handleChange = (e) => {
@@ -19,7 +23,6 @@ function ConfirmEditDetails() {
     <DashboardLayout activePage="jobs">
       <div className="max-w-5xl mx-auto px-6 pt-1 pb-6 text-left">
 
-       
         <div className="w-full mb-5">
           <div className="mb-2">
             <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
@@ -32,7 +35,6 @@ function ConfirmEditDetails() {
           </div>
         </div>
 
-       
         <div className="flex items-center justify-start gap-2 mb-6 bg-transparent py-1">
           <div className="flex items-center gap-2 shrink-0">
             <span className="w-7 h-7 flex items-center justify-center rounded-full bg-emerald-500 text-white font-semibold text-xs">1</span>
@@ -59,69 +61,68 @@ function ConfirmEditDetails() {
         </div>
 
         <div className="max-w-[570px] mx-auto">
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-          
-          <div className="mb-4">
-            <label className="text-[#0f2537] text-xs font-semibold mb-1.5 block">Job Title</label>
-            <input
-              type="text"
-              name="jobTitle"
-              value={form.jobTitle}
-              onChange={handleChange}
-              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-slate-400"
-            />
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+            
+            <div className="mb-4">
+              <label className="text-[#0f2537] text-xs font-semibold mb-1.5 block">Job Title</label>
+              <input
+                type="text"
+                name="jobTitle"
+                value={form.jobTitle}
+                onChange={handleChange}
+                className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-slate-400"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="text-[#0f2537] text-xs font-semibold mb-1.5 block">Experience</label>
+              <input
+                type="text"
+                name="experience"
+                value={form.experience}
+                onChange={handleChange}
+                className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-slate-400"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="text-[#0f2537] text-xs font-semibold mb-1.5 block">Job Type</label>
+              <select
+                name="jobType"
+                value={form.jobType}
+                onChange={handleChange}
+                className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-slate-400"
+              >
+                <option value="Remote">Remote</option>
+                <option value="Onsite">Onsite</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Full-Time">Full-Time</option>
+                <option value="Part-Time">Part-Time</option>
+                <option value="Contract">Contract</option>
+                <option value="Freelance">Freelance</option>
+                <option value="Internship">Internship</option>
+              </select>
+            </div>
+
+            <div className="mb-2">
+              <label className="text-[#0f2537] text-xs font-semibold mb-1.5 block">Skills</label>
+              <input
+                type="text"
+                name="skills"
+                value={form.skills}
+                onChange={handleChange}
+                className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-slate-400"
+              />
+            </div>
+
           </div>
 
-          <div className="mb-4">
-            <label className="text-[#0f2537] text-xs font-semibold mb-1.5 block">Experience</label>
-            <input
-              type="text"
-              name="experience"
-              value={form.experience}
-              onChange={handleChange}
-              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-slate-400"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="text-[#0f2537] text-xs font-semibold mb-1.5 block">Job Type</label>
-            <select
-              name="jobType"
-              value={form.jobType}
-              onChange={handleChange}
-              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-slate-400"
-            >
-              <option value="Remote">Remote</option>
-              <option value="Onsite">Onsite</option>
-              <option value="Hybrid">Hybrid</option>
-              <option value="Full-Time">Full-Time</option>
-              <option value="Part-Time">Part-Time</option>
-              <option value="Contract">Contract</option>
-              <option value="Freelance">Freelance</option>
-              <option value="Internship">Internship</option>
-            </select>
-          </div>
-
-          <div className="mb-2">
-            <label className="text-[#0f2537] text-xs font-semibold mb-1.5 block">Skills</label>
-            <input
-              type="text"
-              name="skills"
-              value={form.skills}
-              onChange={handleChange}
-              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-slate-400"
-            />
-          </div>
-
-        </div>
-
-       
-        <button
-          onClick={() => navigate('/jobs/match')}
-          className="w-full mt-4 bg-[#163C6B] text-white py-2.5 rounded-lg text-xs font-semibold hover:opacity-90 transition"
-        >
-          Confirm & Continue
-        </button>
+          <button
+            onClick={() => navigate('/jobs/match', { state: { job, score, form } })}
+            className="w-full mt-4 bg-[#163C6B] text-white py-2.5 rounded-lg text-xs font-semibold hover:opacity-90 transition"
+          >
+            Confirm & Continue
+          </button>
         </div>
 
       </div>

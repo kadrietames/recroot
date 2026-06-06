@@ -1,16 +1,64 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
+import { getMyResumes, applyForJob, createJob } from '../../api/recroot'
 
 function Submit() {
   const navigate = useNavigate()
   const [coverLetter, setCoverLetter] = useState('')
+  const [resume, setResume] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const fetchResume = async () => {
+      try {
+        const resumes = await getMyResumes()
+        if (resumes && resumes.length > 0) {
+          setResume(resumes[0])
+        }
+      } catch (err) {
+        setError('Could not fetch resume. Please upload your resume first.')
+      }
+    }
+    fetchResume()
+  }, [])
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    setError('')
+
+    try {
+      const resumeId = resume?.id || resume?._id
+
+      if (!resumeId) {
+        setError('No resume found. Please upload your resume first.')
+        setLoading(false)
+        return
+      }
+
+      // Create a job first then apply
+      const job = await createJob('Job Application', coverLetter || 'No cover letter provided')
+      const jobId = job?.id || job?._id
+
+      const data = await applyForJob(jobId, resumeId)
+
+      if (data.error) {
+        setError('Application failed. Please try again.')
+      } else {
+        navigate('/jobs/success')
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <DashboardLayout activePage="jobs">
       <div className="max-w-5xl mx-auto px-6 pt-1 pb-6 text-left">
         
-      
         <div className="w-full mb-5">
           <div className="mb-2">
             <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
@@ -27,12 +75,13 @@ function Submit() {
 
         <div className="max-w-[570px] mx-auto">
 
-        
           <h3 className="text-[#0f2537] text-sm font-bold mb-2">Resume</h3>
           <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg px-4 py-3 mb-5 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="bg-red-100 text-red-500 text-[9px] font-bold px-1.5 py-0.5 rounded">PDF</div>
-              <p className="text-[#0f2537] text-xs font-semibold">Alex_Joshua_Resume.pdf</p>
+              <p className="text-[#0f2537] text-xs font-semibold">
+                {resume?.filename || resume?.name || 'Alex_Joshua_Resume.pdf'}
+              </p>
             </div>
             <button className="text-[#163C6B] text-xs font-semibold hover:opacity-70 transition">
               Change
@@ -48,12 +97,20 @@ function Submit() {
             className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-600 resize-none focus:outline-none focus:border-slate-300 placeholder-slate-300 mb-4"
           />
 
-       
+          {error && (
+            <p className="text-red-500 text-[10px] mb-3">{error}</p>
+          )}
+
           <button
-            onClick={() => navigate('/jobs/success')}
-            className="w-full bg-[#163C6B] text-white py-2.5 rounded-lg text-xs font-semibold hover:opacity-90 transition"
+            onClick={handleSubmit}
+            disabled={loading}
+            className={`w-full py-2.5 rounded-lg text-xs font-semibold transition text-white ${
+              loading
+                ? 'bg-[#163C6B]/60 cursor-not-allowed'
+                : 'bg-[#163C6B] hover:opacity-90'
+            }`}
           >
-            Submit Application
+            {loading ? 'Submitting...' : 'Submit Application'}
           </button>
 
         </div>

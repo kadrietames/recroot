@@ -1,13 +1,48 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import DashboardLayout from '../components/DashboardLayout'
 import myresume from '../assets/myresume.png'
 import lock from '../assets/lock.png'
+import { uploadResume } from '../api/recroot'
 
 function Upload() {
   const [fileName, setFileName] = useState('')
+  const [file, setFile] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0]
+    if (selectedFile) {
+      setFileName(selectedFile.name)
+      setFile(selectedFile)
+      setError('')
+    }
+  }
+
+  const handleUpload = async () => {
+    if (!file) return
+    
+    setLoading(true)
+    setError('')
+    
+    try {
+      const data = await uploadResume(file)
+      
+      if (data.error || data.message === 'error') {
+        setError('Upload failed. Please try again.')
+      } else {
+        navigate('/jobs/input-method')
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-   
     <DashboardLayout activePage="upload">
       <div className="w-full text-left mb-6">
         <div className="mb-2">
@@ -23,13 +58,10 @@ function Upload() {
 
       <div className="w-full flex flex-col items-center justify-start max-w-xl mt-6 mx-auto">
         
-       
         <div className="w-full bg-white rounded-xl border border-slate-200/70 p-6 shadow-sm flex flex-col items-center justify-center">
           
-         
           <div className="w-full mx-auto bg-white rounded-xl border border-dashed border-slate-300 py-9 px-8 flex flex-col items-center justify-center mb-8">
             
-           
             <div className="mb-4 bg-slate-50 p-3 rounded-full">
               <img src={myresume} alt="Upload Icon" className="w-6 h-6 object-contain opacity-70" />
             </div>
@@ -47,18 +79,29 @@ function Upload() {
                 type="file" 
                 accept=".pdf,.doc,.docx" 
                 className="hidden"
-                onChange={(e) => setFileName(e.target.files[0]?.name)}
+                onChange={handleFileChange}
               />
             </label>
 
+            {error && (
+              <p className="text-red-500 text-[10px] mt-3">{error}</p>
+            )}
+
             {fileName && (
-              <button className="bg-emerald-600 text-white px-10 py-2 rounded-md text-xs font-semibold hover:bg-emerald-700 transition duration-200 cursor-pointer mt-4 shadow-sm">
-                Analyze Resume 
+              <button 
+                onClick={handleUpload}
+                disabled={loading}
+                className={`px-10 py-2 rounded-md text-xs font-semibold transition duration-200 cursor-pointer mt-4 shadow-sm text-white ${
+                  loading 
+                    ? 'bg-emerald-400 cursor-not-allowed' 
+                    : 'bg-emerald-600 hover:bg-emerald-700'
+                }`}
+              >
+                {loading ? 'Uploading...' : 'Analyze Resume'}
               </button>
             )}
           </div>
 
-         
           <div className="flex flex-col items-center gap-4 w-full max-w-xl">
             <a href="#" className="w-full max-w-xs bg-[#e9f7f2] border border-[#cbeee0] rounded-xl py-2.5 flex items-center justify-center gap-2 hover:bg-[#def5eb] transition duration-150">
               <img src={myresume} alt="Report File" className="w-4 h-4 object-contain opacity-60 brightness-50" />

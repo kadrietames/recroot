@@ -1,12 +1,34 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
+import { createJob } from '../../api/recroot'
 
 function EmptyState() {
   const [text, setText] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const isGoodLength = text.length >= 100
+
+  const handleAnalyze = async () => {
+    setLoading(true)
+    setError('')
+
+    try {
+      const data = await createJob('Job Description', text)
+
+      if (data.error) {
+        setError('Something went wrong. Please try again.')
+      } else {
+        navigate('/jobs/extracted', { state: { job: data } })
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <DashboardLayout activePage="jobs">
@@ -49,35 +71,43 @@ function EmptyState() {
           </div>
         </div>
 
-
-          <div className="max-w-[570px] mx-auto">
-        <div className="bg-[#f8fafc]/50 border border-slate-100 rounded-xl p-8 shadow-sm">
-          <textarea
-            value={text}
-            onChange={(e) => {
-              if (e.target.value.length <= 3000) setText(e.target.value)
-            }}
-            placeholder="Paste your job description here..."
-            rows={14}
-            className="w-full bg-[#f0f4f8] border border-slate-200 rounded-xl p-4 text-xs text-slate-600 resize-none focus:outline-none focus:border-slate-300 placeholder-slate-300"
-          />
-          <div className="flex justify-between items-center mt-1 mb-3">
-            <p className="text-slate-400 text-[10px]">{text.length}/3000</p>
-            {isGoodLength && (
-              <p className="text-emerald-500 text-[10px] font-semibold flex items-center gap-1">
-                ✅ Looks good!
-              </p>
+        <div className="max-w-[570px] mx-auto">
+          <div className="bg-[#f8fafc]/50 border border-slate-100 rounded-xl p-8 shadow-sm">
+            <textarea
+              value={text}
+              onChange={(e) => {
+                if (e.target.value.length <= 3000) setText(e.target.value)
+              }}
+              placeholder="Paste your job description here..."
+              rows={14}
+              className="w-full bg-[#f0f4f8] border border-slate-200 rounded-xl p-4 text-xs text-slate-600 resize-none focus:outline-none focus:border-slate-300 placeholder-slate-300"
+            />
+            <div className="flex justify-between items-center mt-1 mb-3">
+              <p className="text-slate-400 text-[10px]">{text.length}/3000</p>
+              {isGoodLength && (
+                <p className="text-emerald-500 text-[10px] font-semibold flex items-center gap-1">
+                  ✅ Looks good!
+                </p>
+              )}
+            </div>
+            {error && (
+              <p className="text-red-500 text-[10px] mt-1">{error}</p>
             )}
           </div>
-          
+
+          <button
+            onClick={handleAnalyze}
+            disabled={loading}
+            className={`w-full mt-3 py-2.5 rounded-lg text-xs font-semibold transition-all text-white ${
+              loading
+                ? 'bg-[#163C6B]/60 cursor-not-allowed'
+                : 'bg-[#163C6B] cursor-pointer hover:opacity-90'
+            }`}
+          >
+            {loading ? 'Analyzing...' : 'Analyze Job Description'}
+          </button>
         </div>
-      <button
-        onClick={() => navigate('/jobs/extracted')}
-        className="w-full py-2.5 rounded-lg text-xs font-semibold transition-all bg-[#163C6B] text-white cursor-pointer hover:opacity-90"
-      >
-        Analyze Job Description
-      </button>
-      </div>
+
       </div>
     </DashboardLayout>
   )
