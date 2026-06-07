@@ -18,6 +18,7 @@ import LogOut from './pages/LogOut'
 import Reports from './pages/Reports'
 import GenerateReport from './pages/GenerateReport'
 import ReportOverview from './pages/ReportOverview'
+import MatchScore from './pages/MatchScore'
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/reports/generate" element={<GenerateReport />} />
         <Route path="/reports/overview" element={<ReportOverview />} />
+        <Route path="/match-score" element={<MatchScore />} />
       </Routes>
     </BrowserRouter>
   )

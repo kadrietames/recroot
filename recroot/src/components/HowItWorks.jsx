@@ -62,7 +62,7 @@ function HowItWorks() {
               <img src={Hero1} alt="AI Analyses" className="w-5 h-5 object-contain" />
             </div>
             <h3 className="text-dark font-bold text-base mb-2">AI Analyses</h3>
-            <p className="text-body text-xs leading-relaxed max-w-xs mx-auto">Sign up and create your account in seconds.</p>
+            <p className="text-body text-xs leading-relaxed max-w-xs mx-auto">AI Analyzes your documents in seconds.</p>
           </div>
         </div>
 
