@@ -18,6 +18,7 @@ import LogOut from './pages/LogOut'
 import Reports from './pages/Reports'
 import GenerateReport from './pages/GenerateReport'
 import ReportOverview from './pages/ReportOverview'
+import InterviewPrep from './pages/InterviewPage/InterviewPrep';
 
 function App() {
   return (
@@ -42,9 +43,10 @@ function App() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/reports/generate" element={<GenerateReport />} />
         <Route path="/reports/overview" element={<ReportOverview />} />
+        <Route path="/interview-preparation" element={<InterviewPrep />} />
       </Routes>
     </BrowserRouter>
   )
 }
 
-export default App
+export default App;

@@ -17,6 +17,7 @@ function DashboardLayout({ children, activePage }) {
   return (
     <div className="flex h-screen w-screen bg-[#edf2f7] font-sans antialiased overflow-hidden">
       
+      {/* Sidebar Navigation */}
       <aside 
         className="w-72 h-screen sticky top-0 bg-white border-r border-slate-200/60 flex flex-col px-4 pt-4 pb-6 shrink-0 z-50 overflow-y-auto select-none"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -29,6 +30,7 @@ function DashboardLayout({ children, activePage }) {
 
         <nav className="flex flex-col space-y-6">
         
+          {/* Dashboard Link */}
           <a 
             href="#" 
             className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
@@ -45,7 +47,7 @@ function DashboardLayout({ children, activePage }) {
             Dashboard
           </a>
 
-     
+          {/* My Resume Link */}
           <Link
             to="/upload"
             className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition duration-150 ${
@@ -54,18 +56,19 @@ function DashboardLayout({ children, activePage }) {
                 : 'rounded-lg text-slate-400 hover:text-slate-600'
             }`}
           >
-           <img 
-            src={myresume} 
-            alt="My Resume" 
-            className={`w-5 h-5 object-contain transition-all duration-150 ${
-              activePage === 'upload' 
-                ? 'brightness-0 invert opacity-100' 
-                : 'brightness-50 opacity-50' 
-            }`} 
-          />
+            <img 
+              src={myresume} 
+              alt="My Resume" 
+              className={`w-5 h-5 object-contain transition-all duration-150 ${
+                activePage === 'upload' 
+                  ? 'brightness-0 invert opacity-100' 
+                  : 'brightness-50 opacity-50' 
+              }`} 
+            />
             <span className="block">My Resume</span>
           </Link>
 
+          {/* Jobs Link */}
           <Link
             to="/jobs"
             className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition duration-150 ${
@@ -82,7 +85,7 @@ function DashboardLayout({ children, activePage }) {
             Jobs Description
           </Link>
 
-     
+          {/* Match Score Link */}
           <a 
             href="#" 
             className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
@@ -98,11 +101,11 @@ function DashboardLayout({ children, activePage }) {
             />
             Match Score
           </a>
-
-      
-          <a 
-            href="#" 
-            className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
+          
+          {/* Interview Prep Link (FIXED CAPITALIZATION, ROUTE PATH, & TYPOS) */}
+          <Link 
+            to="/interview-preparation" 
+            className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition duration-150 ${
               activePage === 'interview-prep'
                 ? 'rounded-xl bg-[#1d3d6f] text-white shadow-sm'
                 : 'rounded-lg text-slate-400 hover:text-slate-600'
@@ -114,32 +117,32 @@ function DashboardLayout({ children, activePage }) {
               className={`w-5 h-5 object-contain ${activePage === 'interview-prep' ? 'brightness-0 invert' : 'opacity-50'}`} 
             />
             Interview Prep
-          </a>
+          </Link>
 
-           
-        <Link
-          to="/reports"
-          className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
-            activePage === 'reports'
-              ? 'rounded-xl bg-[#1d3d6f] text-white shadow-sm'
-              : 'rounded-lg text-slate-400 hover:text-slate-600'
-          }`}
-        >
-          <img 
-            src={report} 
-            alt="Reports" 
-            className={`w-5 h-5 object-contain ${activePage === 'reports' ? 'brightness-0 invert' : 'opacity-50'}`} 
-          />
-          Reports
-        </Link>
+          {/* Reports Link */}
+          <Link
+            to="/reports"
+            className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
+              activePage === 'reports'
+                ? 'rounded-xl bg-[#1d3d6f] text-white shadow-sm'
+                : 'rounded-lg text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            <img 
+              src={report} 
+              alt="Reports" 
+              className={`w-5 h-5 object-contain ${activePage === 'reports' ? 'brightness-0 invert' : 'opacity-50'}`} 
+            />
+            Reports
+          </Link>
           
         </nav>
 
-     
+        {/* Bottom Sidebar Settings */}
         <div className="border-t border-slate-200 pt-6 mt-12 mb-4">
           <div className="flex flex-col space-y-5">
             
-           
+            {/* Settings */}
             <Link
               to="/settings"
               className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
@@ -156,7 +159,7 @@ function DashboardLayout({ children, activePage }) {
               Settings
             </Link>
 
-         
+            {/* Logout */}
             <Link
               to="/logout"
               className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
@@ -177,7 +180,9 @@ function DashboardLayout({ children, activePage }) {
         </div>
       </aside>
 
+      {/* Main Workspace Frame */}
       <div className="flex-1 flex flex-col min-w-0 h-full">
+        {/* Workspace Top Header Header */}
         <header className="h-16 bg-white border-b border-slate-200/60 px-8 flex items-center justify-between shrink-0">
           <div className="relative w-64">
             <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 text-xs">🔍</span>
@@ -211,6 +216,7 @@ function DashboardLayout({ children, activePage }) {
           </div>
         </header>
 
+        {/* Dynamic Inner Component Content injection site */}
         <main className="p-8 flex-1 overflow-y-auto min-w-0">
           {children}
         </main>
