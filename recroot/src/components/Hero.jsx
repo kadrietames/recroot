@@ -1,6 +1,9 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Hero() {
+  const navigate = useNavigate()
+
   return (
     <section 
       className="py-16 md:py-24 px-6 md:px-10 text-center"
@@ -18,12 +21,13 @@ function Hero() {
           and Intelligent Preparation For Candidates.
         </p>
 
-
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <button className="bg-primary text-white w-full sm:w-auto px-6 py-3 rounded-lg text-sm font-medium hover:opacity-90 transition duration-300 cursor-pointer">
             Explore For Free 
           </button>
-          <button className="border border-primary text-primary w-full sm:w-auto px-6 py-3 rounded-lg text-sm font-medium hover:bg-primary hover:text-white transition duration-300 cursor-pointer">
+          <button 
+            onClick={() => navigate('/upload')}
+            className="border border-primary text-primary w-full sm:w-auto px-6 py-3 rounded-lg text-sm font-medium hover:bg-primary hover:text-white transition duration-300 cursor-pointer">
             Upload Resume 
           </button>
         </div>

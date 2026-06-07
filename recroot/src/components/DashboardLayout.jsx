@@ -116,22 +116,23 @@ function DashboardLayout({ children, activePage }) {
             Interview Prep
           </a>
 
-        
-          <a 
-            href="#" 
-            className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
-              activePage === 'reports'
-                ? 'rounded-xl bg-[#1d3d6f] text-white shadow-sm'
-                : 'rounded-lg text-slate-400 hover:text-slate-600'
-            }`}
-          >
-            <img 
-              src={report} 
-              alt="Reports" 
-              className={`w-5 h-5 object-contain ${activePage === 'reports' ? 'brightness-0 invert' : 'opacity-50'}`} 
-            />
-            Reports
-          </a>
+           
+        <Link
+          to="/reports"
+          className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
+            activePage === 'reports'
+              ? 'rounded-xl bg-[#1d3d6f] text-white shadow-sm'
+              : 'rounded-lg text-slate-400 hover:text-slate-600'
+          }`}
+        >
+          <img 
+            src={report} 
+            alt="Reports" 
+            className={`w-5 h-5 object-contain ${activePage === 'reports' ? 'brightness-0 invert' : 'opacity-50'}`} 
+          />
+          Reports
+        </Link>
+          
         </nav>
 
      

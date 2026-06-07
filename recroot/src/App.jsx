@@ -15,6 +15,9 @@ import Settings from './pages/Settings'
 import ProfileSettings from './pages/ProfileSettings'
 import HelpSupport from './pages/HelpSupport'
 import LogOut from './pages/LogOut'
+import Reports from './pages/Reports'
+import GenerateReport from './pages/GenerateReport'
+import ReportOverview from './pages/ReportOverview'
 
 function App() {
   return (
@@ -36,6 +39,9 @@ function App() {
         <Route path="/settings/profile" element={<ProfileSettings />} />
         <Route path="/settings/help" element={<HelpSupport />} />
         <Route path="/logout" element={<LogOut />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/reports/generate" element={<GenerateReport />} />
+        <Route path="/reports/overview" element={<ReportOverview />} />
       </Routes>
     </BrowserRouter>
   )
