@@ -67,8 +67,9 @@ function HowItWorks() {
         </div>
 
        
-        <div className="bg-white border border-border rounded-xl p-6 pt-10 text-center hover:-translate-y-2 hover:border-primary transition duration-300 cursor-pointer relative flex flex-col justify-between h-full">
-          <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#1d3557] text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center">5</span>
+       <Link to="/interview-prep" className="block relative group h-full">
+        <div className="bg-white border border-border rounded-xl p-6 pt-10 text-center hover:-translate-y-2 hover:border-primary group-hover:border-primary transition duration-300 cursor-pointer flex flex-col justify-between h-full">
+          <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#1d3557] text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center z-10">5</span>
           <div>
             <div className="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
               <img src={Hero1} alt="Interview Prep" className="w-5 h-5 object-contain" />
@@ -77,6 +78,7 @@ function HowItWorks() {
             <p className="text-body text-xs leading-relaxed max-w-xs mx-auto">Top questions, key topics and preparation guide.</p>
           </div>
         </div>
+      </Link>
 
       </div>
     </section>

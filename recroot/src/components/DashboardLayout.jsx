@@ -31,8 +31,8 @@ function DashboardLayout({ children, activePage }) {
         <nav className="flex flex-col space-y-6">
         
           {/* Dashboard Link */}
-          <a 
-            href="#" 
+          <Link
+             to="/candidate-dashboard" 
             className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
               activePage === 'dashboard'
                 ? 'rounded-xl bg-[#1d3d6f] text-white shadow-sm'
@@ -45,7 +45,7 @@ function DashboardLayout({ children, activePage }) {
               className={`w-5 h-5 object-contain ${activePage === 'dashboard' ? 'brightness-0 invert' : 'opacity-50'}`} 
             />
             Dashboard
-          </a>
+          </Link>
 
           {/* My Resume Link */}
           <Link
@@ -85,10 +85,9 @@ function DashboardLayout({ children, activePage }) {
             Jobs Description
           </Link>
 
-         
-          <Link
+         <Link
             to="/match-score"
-            className={`flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition duration-150 ${
+            className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
               activePage === 'match-score'
                 ? 'rounded-xl bg-[#1d3d6f] text-white shadow-sm'
                 : 'rounded-lg text-slate-400 hover:text-slate-600'
@@ -97,14 +96,13 @@ function DashboardLayout({ children, activePage }) {
             <img 
               src={matchscore} 
               alt="Match Score" 
-              className={`w-5 h-5 object-contain ${activePage === 'jobs' ? 'brightness-0 invert' : 'opacity-50'}`} 
+              className={`w-5 h-5 object-contain ${activePage === 'match-score' ? 'brightness-0 invert' : 'opacity-50'}`} 
             />
-             Match Score
+            Match Score
           </Link>
 
-
-          <a 
-            href="#" 
+                    <Link
+            to="/interview-prep"
             className={`flex items-center gap-3 px-4 py-2 text-sm font-medium transition duration-150 ${
               activePage === 'interview-prep'
                 ? 'rounded-xl bg-[#1d3d6f] text-white shadow-sm'
@@ -118,6 +116,7 @@ function DashboardLayout({ children, activePage }) {
             />
             Interview Prep
           </Link>
+          
 
           {/* Reports Link */}
           <Link

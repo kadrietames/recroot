@@ -9,17 +9,14 @@ function Navbar() {
   return (
     <nav className="bg-white sticky top-0 z-50 flex items-center justify-between px-6 md:px-12 py-5 border-b border-border relative">
       
-      
       <img src={Logo} alt="Logo" className="h-7 w-auto" />
       
       <ul className="hidden md:flex gap-8 list-none">
         <li><Link to="/" className="text-primary font-medium text-base">Home</Link></li>
-        <li><Link to="/interview-prep" className="text-body text-base hover:text-primary">Interview Prep</Link></li>
         <li><a href="#features" className="text-body text-base hover:text-primary">Features</a></li>
         <li><a href="#how-it-works" className="text-body text-base hover:text-primary">How it works</a></li>
         <li><a href="#about" className="text-body text-base hover:text-primary">About</a></li>
       </ul>
-
 
       <div className="hidden md:flex items-center gap-4">
         <a href="#login" className="text-body text-base hover:text-primary">Login</a>
@@ -28,7 +25,6 @@ function Navbar() {
         </button>
       </div>
 
-    
       <button 
         onClick={() => setIsOpen(!isOpen)} 
         className="md:hidden text-2xl text-body cursor-pointer"
@@ -36,11 +32,9 @@ function Navbar() {
         {isOpen ? '✕' : '☰'}
       </button>
 
-
       {isOpen && (
         <div className="absolute top-full left-0 w-full bg-white border-b border-border flex flex-col p-6 gap-4 md:hidden shadow-lg">
           <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
-          <Link to="/interview-prep" onClick={() => setIsOpen(false)}>Interview Prep</Link>
           <a href="#features" onClick={() => setIsOpen(false)}>Features</a>
           <a href="#how-it-works" onClick={() => setIsOpen(false)}>How it works</a>
           <a href="#about" onClick={() => setIsOpen(false)}>About</a>

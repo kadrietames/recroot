@@ -8,7 +8,7 @@ import CTA from '../components/CTA'
 import Footer from '../components/Footer'
 import Stats from '../components/Stats'
 import UserTypes from '../components/UserTypes'
-import InterviewPreparation from '../components/InterviewPreparation'
+// import InterviewPreparation from '../components/InterviewPreparation'
 
 function Home() {
   return (
@@ -19,7 +19,7 @@ function Home() {
       <Stats />
       <HowItWorks />
       <UserTypes />
-      <InterviewPreparation />
+      {/* <InterviewPreparation /> */}
       <Testimonials />
       <CTA />
       <Footer />

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
-import { getMyResumes, applyForJob, createJob } from '../../api/recroot'
+import { getMyResumes, applyForJob, createJob, uploadResume } from '../../api/recroot'
 
 function Submit() {
   const navigate = useNavigate()
   const [coverLetter, setCoverLetter] = useState('')
   const [resume, setResume] = useState(null)
+  const [newFile, setNewFile] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -24,6 +25,26 @@ function Submit() {
     fetchResume()
   }, [])
 
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setNewFile(file)
+    setLoading(true)
+    setError('')
+
+    try {
+      const uploaded = await uploadResume(file)
+      if (uploaded) {
+        setResume(uploaded)
+      }
+    } catch (err) {
+      setError('Could not upload resume. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleSubmit = async () => {
     setLoading(true)
     setError('')
@@ -37,7 +58,6 @@ function Submit() {
         return
       }
 
-      // Create a job first then apply
       const job = await createJob('Job Application', coverLetter || 'No cover letter provided')
       const jobId = job?.id || job?._id
 
@@ -80,12 +100,18 @@ function Submit() {
             <div className="flex items-center gap-3">
               <div className="bg-red-100 text-red-500 text-[9px] font-bold px-1.5 py-0.5 rounded">PDF</div>
               <p className="text-[#0f2537] text-xs font-semibold">
-                {resume?.filename || resume?.name || 'Alex_Joshua_Resume.pdf'}
+                {newFile ? newFile.name : resume?.filename || resume?.name || 'No resume uploaded'}
               </p>
             </div>
-            <button className="text-[#163C6B] text-xs font-semibold hover:opacity-70 transition">
-              Change
-            </button>
+            <label className="text-[#163C6B] text-xs font-semibold hover:opacity-70 transition cursor-pointer">
+              {loading ? 'Uploading...' : 'Change'}
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </label>
           </div>
 
           <h3 className="text-[#0f2537] text-sm font-bold mb-2">Cover Letter</h3>
