@@ -62,9 +62,8 @@ function MatchScore() {
 
   return (
     <DashboardLayout activePage="match-score">
-      <div className="max-w-5xl mx-auto px-2 pt-1 pb-6 text-left">
+      <div className="max-w-5xl mx-auto px-4 sm:px-2 pt-1 pb-6 text-left">
 
-        
         <div className="w-full mb-5">
           <div className="mb-3">
             <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
@@ -73,13 +72,13 @@ function MatchScore() {
           </div>
         </div>
 
-  
-        <div className="bg-white border border-slate-200 rounded-xl shadow-sm px-5 py-4 mb-4 flex items-center justify-between">
+        
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm px-5 py-4 mb-4 flex items-center justify-between gap-3">
           <div>
             <h2 className="text-[#0f2537] text-sm font-bold">Senior Product Designer</h2>
             <p className="text-slate-400 text-[10px] mt-0.5">TechCrush • Lagos, Nigeria</p>
           </div>
-          <button className="bg-[#163C6B] text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:opacity-90 transition flex items-center gap-1">
+          <button className="bg-[#163C6B] text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:opacity-90 transition flex items-center gap-1 shrink-0">
             + Save Job
           </button>
         </div>
@@ -89,12 +88,11 @@ function MatchScore() {
         ) : error ? (
           <p className="text-red-500 text-xs">{error}</p>
         ) : (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
           
             <div className="flex flex-col gap-3">
 
-       
               <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col items-center text-center">
                 <h3 className="text-[#0f2537] text-xs font-bold mb-4">Your Match Score</h3>
                 <div className="relative w-24 h-24 flex items-center justify-center mb-3">
@@ -117,10 +115,9 @@ function MatchScore() {
                 <p className="text-slate-400 text-[10px]">You are a top match for this role</p>
               </div>
 
-             
               <div className="bg-transparent border border-slate-200 rounded-xl p-5 shadow-sm">
                 <h3 className="text-[#0f2537] text-xs font-bold mb-3">Key Strengths</h3>
-                <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
                   {keyStrengths.map((strength, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <img src={Green} alt="check" className="w-3.5 h-3.5 object-contain" />
@@ -132,10 +129,9 @@ function MatchScore() {
 
             </div>
 
-          
+           
             <div className="flex flex-col gap-3">
 
-           
               <div className="bg-transparent border border-slate-200 rounded-xl p-5 shadow-sm">
                 <h3 className="text-[#0f2537] text-xs font-bold mb-4">Match Breakdown</h3>
                 <div className="flex flex-col gap-2.5">
@@ -154,7 +150,6 @@ function MatchScore() {
                 </div>
               </div>
 
-            
               <div className="bg-transparent border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col items-center justify-center text-center">
                 <span className="text-emerald-500 text-2xl mb-2">🎯</span>
                 <p className="text-emerald-500 text-[10px] font-semibold">You have 6 out of 10 must have skills</p>
@@ -162,14 +157,13 @@ function MatchScore() {
 
             </div>
 
-          
-            <div className="flex flex-col gap-3">
+         
+            <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-1">
 
-             
               <div className="bg-transparent border border-slate-200 rounded-xl p-5 shadow-sm">
                 <h3 className="text-[#0f2537] text-xs font-bold mb-1">Job Requirements</h3>
                 <p className="text-slate-400 text-[10px] mb-3">Must Have</p>
-                <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
                   {jobRequirements.map((req, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <img src={Green} alt="check" className="w-3.5 h-3.5 object-contain" />
@@ -179,7 +173,6 @@ function MatchScore() {
                 </div>
               </div>
 
-             
               <div className="bg-transparent border border-slate-200 rounded-xl p-5 shadow-sm">
                 <h3 className="text-[#0f2537] text-xs font-bold mb-2">About the Role</h3>
                 <p className="text-slate-400 text-[10px] leading-relaxed mb-2">

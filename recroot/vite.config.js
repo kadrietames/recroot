@@ -9,7 +9,9 @@ export default defineConfig({
   ],
   server: {
     watch: {
-      usePolling: true
+      usePolling: true,
+      interval: 100,
+      ignored: ['**/node_modules/**', '**/.git/**']
     }
   }
 })
