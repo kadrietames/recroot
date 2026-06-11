@@ -35,6 +35,8 @@ function SignUp() {
       if (data.error || data.message === 'error') {
         setError(data.message || 'Sign up failed. Please try again.')
       } else {
+        localStorage.setItem('userName', form.name)
+        localStorage.setItem('userEmail', form.email)
         navigate('/otp', { state: { email: form.email, name: form.name } })
       }
     } catch (err) {

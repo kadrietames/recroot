@@ -151,13 +151,15 @@ function DashboardLayout({ children, activePage }) {
             <div className="w-px h-5 bg-slate-200 mx-1 hidden sm:block"></div>
 
             <div className="flex items-center gap-2">
-              <img src={alex} alt="Alex Joshua" className="w-7 h-7 rounded-full object-cover" />
-              <div className="text-left hidden sm:block">
-                <h4 className="text-slate-700 font-bold text-[11px] leading-tight">Alex Joshua</h4>
-                <p className="text-slate-400 text-[10px] leading-tight">Candidate</p>
-              </div>
-              <span className="text-slate-400 text-[9px] ml-1 hidden sm:block">▼</span>
+            <img src={alex} alt="User" className="w-7 h-7 rounded-full object-cover" />
+            <div className="text-left hidden sm:block">
+              <h4 className="text-slate-700 font-bold text-[11px] leading-tight">
+                {localStorage.getItem('userName') || 'Alex Joshua'}
+              </h4>
+              <p className="text-slate-400 text-[10px] leading-tight">Candidate</p>
             </div>
+            <span className="text-slate-400 text-[9px] ml-1 hidden sm:block">▼</span>
+          </div>
           </div>
         </header>
 

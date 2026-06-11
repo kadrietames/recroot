@@ -82,7 +82,9 @@ export const uploadResume = async (file) => {
     headers: { 'Authorization': `Bearer ${getToken()}` },
     body: formData
   })
-  return res.json()
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+  return data
 }
 
 export const getMyResumes = async () => {

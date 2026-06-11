@@ -30,7 +30,7 @@ function CandidateDashboard() {
     fetchData()
   }, [])
 
-  const userName = resume?.name?.split(' ')?.[0] || 'Alex'
+  const userName = localStorage.getItem('userName')?.split(' ')?.[0] || resume?.name?.split(' ')?.[0] || 'Alex'
   const profileStrength = resume ? 85 : 0
   const applicationsSent = applications.length || 12
   const jobMatches = Array.isArray(applications)

@@ -13,30 +13,26 @@ function JobMatchPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const handleApply = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const resumes = await getMyResumes()
-      const resumeId = resumes[0]?.id || resumes[0]?._id
-      if (!resumeId) {
-        setError('No resume found. Please upload your resume first.')
-        setLoading(false)
-        return
-      }
-      const data = await applyForJob(job?.id || job?._id, resumeId)
-      if (data.error) {
-        setError('Application failed. Please try again.')
-      } else {
-        navigate('/jobs/submit', { state: { job, score, applicationId: data.id || data._id } })
-      }
-    } catch (err) {
-      setError('Something went wrong. Please try again.')
-    } finally {
+ const handleApply = async () => {
+  setLoading(true)
+  setError('')
+  try {
+    const resumes = await getMyResumes()
+    const list = Array.isArray(resumes) ? resumes : resumes.resumes || []
+    const resumeId = list[0]?.id || list[0]?._id
+    if (!resumeId) {
+      setError('No resume found. Please upload your resume first.')
       setLoading(false)
+      return
     }
+    const data = await applyForJob(job?.id || job?._id, resumeId)
+    navigate('/jobs/submit', { state: { job, score, applicationId: data.id || data._id } })
+  } catch (err) {
+    setError(err.message || 'Application failed. Please try again.')
+  } finally {
+    setLoading(false)
   }
-
+}
   return (
     <DashboardLayout activePage="jobs">
       <div className="max-w-5xl mx-auto px-4 sm:px-2 pt-1 pb-6 text-left">

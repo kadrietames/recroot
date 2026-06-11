@@ -17,8 +17,8 @@ function ReportOverview() {
           getMyApplications(),
           getInterviews()
         ])
-        setApplications(appsData || [])
-        setInterviews(interviewsData || [])
+        setApplications(Array.isArray(appsData) ? appsData : appsData?.applications || appsData?.data || [])
+        setInterviews(Array.isArray(interviewsData) ? interviewsData : interviewsData?.interviews || interviewsData?.data || [])
       } catch (err) {
         setError('Could not load report data.')
       } finally {

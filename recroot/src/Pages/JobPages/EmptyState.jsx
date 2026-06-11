@@ -12,21 +12,33 @@ function EmptyState() {
   const isGoodLength = text.length >= 100
 
   const handleAnalyze = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const data = await createJob('Job Description', text)
-      if (data.error) {
-        setError('Something went wrong. Please try again.')
-      } else {
-        navigate('/jobs/extracted', { state: { job: data } })
-      }
-    } catch (err) {
-      setError('Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
+  if (!isGoodLength) return
+  setLoading(true)
+  setError('')
+  try {
+    const res = await fetch('https://recroot-backend.onrender.com/jobs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({ title: 'Job Description', description: text })
+    })
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      setError(data.message || `Error ${res.status}: Something went wrong.`)
+      return
     }
+    console.log('createJob response:', data)
+    navigate('/jobs/extracted', { state: { job: data } })
+  } catch (err) {
+    setError('Network error — check your connection and try again.')
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <DashboardLayout activePage="jobs">
@@ -84,9 +96,11 @@ function EmptyState() {
 
           <button
             onClick={handleAnalyze}
-            disabled={loading}
+            disabled={loading || !isGoodLength}
             className={`w-full mt-3 py-2.5 rounded-lg text-xs font-semibold transition-all text-white ${
-              loading ? 'bg-[#163C6B]/60 cursor-not-allowed' : 'bg-[#163C6B] cursor-pointer hover:opacity-90'
+              loading || !isGoodLength
+                ? 'bg-[#163C6B]/60 cursor-not-allowed'
+                : 'bg-[#163C6B] cursor-pointer hover:opacity-90'
             }`}
           >
             {loading ? 'Analyzing...' : 'Analyze Job Description'}

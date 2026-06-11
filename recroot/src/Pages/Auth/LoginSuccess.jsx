@@ -5,7 +5,7 @@ import confetti from '../../assets/confetti.png'
 function LoginSuccess() {
   const navigate = useNavigate()
   const { state } = useLocation()
-  const name = state?.name || 'Alex'
+  const name = state?.name || localStorage.getItem('userName')?.split(' ')?.[0] || 'Alex'
 
   useEffect(() => {
     const timer = setTimeout(() => navigate('/candidate-dashboard'), 2500)

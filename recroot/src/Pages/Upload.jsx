@@ -21,23 +21,20 @@ function Upload() {
     }
   }
 
-  const handleUpload = async () => {
-    if (!file) return
-    setLoading(true)
-    setError('')
-    try {
-      const data = await uploadResume(file)
-      if (data.error || data.message === 'error') {
-        setError('Upload failed. Please try again.')
-      } else {
-        navigate('/jobs/input-method')
-      }
-    } catch (err) {
-      setError('Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+ const handleUpload = async () => {
+  if (!file) return
+  console.log('Token:', localStorage.getItem('token'))
+  setLoading(true)
+  setError('')
+  try {
+    await uploadResume(file)
+    navigate('/jobs/input-method')
+  } catch (err) {
+    setError(err.message || 'Upload failed. Please try again.')
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <DashboardLayout activePage="upload">

@@ -21,8 +21,11 @@ function Reports() {
     const fetchResume = async () => {
       try {
         const resumes = await getMyResumes()
-        if (resumes && resumes.length > 0) setResume(resumes[0])
-      } catch (err) {}
+        const list = Array.isArray(resumes) ? resumes : resumes.resumes || []
+        if (list.length > 0) setResume(list[0])
+      } catch (err) {
+    console.error('Failed to fetch resumes:', err)
+      }
     }
     fetchResume()
   }, [])

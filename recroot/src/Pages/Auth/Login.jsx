@@ -26,8 +26,11 @@ function Login() {
       if (data.error || !data.token) {
         setError(data.message || 'Invalid email or password.')
       } else {
+        const name = data.user?.fullName || data.user?.name || form.email.split('@')[0]
+        localStorage.setItem('userName', name)
+        localStorage.setItem('userEmail', form.email)
         if (rememberMe) localStorage.setItem('rememberMe', 'true')
-        navigate('/login-success', { state: { name: data.user?.fullName || data.user?.name || 'Alex' } })
+        navigate('/login-success', { state: { name } })
       }
     } catch (err) {
       setError('Something went wrong. Please try again.')

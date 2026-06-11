@@ -18,7 +18,8 @@ function Submit() {
     const fetchResume = async () => {
       try {
         const resumes = await getMyResumes()
-        if (resumes && resumes.length > 0) setResume(resumes[0])
+        const list = Array.isArray(resumes) ? resumes : resumes.resumes || []
+        if (list.length > 0) setResume(list[0])
       } catch (err) {
         setError('Could not fetch resume. Please upload your resume first.')
       }
@@ -43,28 +44,29 @@ function Submit() {
   }
 
   const handleSubmit = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const resumeId = resume?.id || resume?._id
-      if (!resumeId) {
-        setError('No resume found. Please upload your resume first.')
-        setLoading(false)
-        return
-      }
-      const jobData = await createJob('Job Application', coverLetter || 'No cover letter provided')
-      const data = await applyForJob(jobData?.id || jobData?._id, resumeId)
-      if (data.error) {
-        setError('Application failed. Please try again.')
-      } else {
-        navigate('/jobs/success')
-      }
-    } catch (err) {
-      setError('Something went wrong. Please try again.')
-    } finally {
+  setLoading(true)
+  setError('')
+  try {
+    const resumeId = resume?.id || resume?._id
+    if (!resumeId) {
+      setError('No resume found. Please upload your resume first.')
       setLoading(false)
+      return
     }
+    const jobId = job?.id || job?._id
+    if (!jobId) {
+      setError('Job not found. Please go back and try again.')
+      setLoading(false)
+      return
+    }
+    await applyForJob(jobId, resumeId)
+    navigate('/jobs/success')
+  } catch (err) {
+    setError(err.message || 'Application failed. Please try again.')
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <DashboardLayout activePage="jobs">
