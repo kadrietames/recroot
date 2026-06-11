@@ -1,9 +1,7 @@
 const BASE_URL = 'https://recroot-backend.onrender.com'
 
-// Helper to get token
 const getToken = () => localStorage.getItem('token')
 
-// Helper for authenticated headers
 const authHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${getToken()}`
@@ -28,6 +26,51 @@ export const login = async (email, password) => {
   const data = await res.json()
   if (data.token) localStorage.setItem('token', data.token)
   return data
+}
+
+export const verifyOTP = async (email, code) => {
+  const res = await fetch(`${BASE_URL}/auth/verify-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, otp: code })
+  })
+  return res.json()
+}
+
+export const resendOTP = async (email) => {
+  const res = await fetch(`${BASE_URL}/auth/resend-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  return res.json()
+}
+
+export const forgotPassword = async (email) => {
+  const res = await fetch(`${BASE_URL}/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  return res.json()
+}
+
+export const resetPassword = async (token, newPassword) => {
+  const res = await fetch(`${BASE_URL}/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword })
+  })
+  return res.json()
+}
+
+export const updateProfile = async (profileData) => {
+  const res = await fetch(`${BASE_URL}/auth/update-profile`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(profileData)
+  })
+  return res.json()
 }
 
 // ===== RESUMES =====

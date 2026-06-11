@@ -22,14 +22,41 @@ import MatchScore from './pages/MatchScore'
 import InterviewPrep from './pages/InterviewPage/InterviewPrep'
 import RecruiterDashboard from './pages/RecruiterDashboard'
 import CandidateDashboard from './pages/CandidateDashboard'
-
+import SignUp from './pages/Auth/SignUp'
+import Login from './pages/Auth/Login'
+import LoginSuccess from './pages/Auth/LoginSuccess'
+import OtpVerification from './pages/Auth/OTP'
+import OTPSuccess from './pages/Auth/OTPSuccess'
+import TellAboutYourself from './pages/Auth/TellAboutYourself'
+import Profession from './pages/Auth/Profession'
+import ForgotPassword from './pages/Auth/ForgotPassword'
+import ResendLink from './pages/Auth/ResendLink'
+import ResetPassword from './pages/Auth/ResetPassword'
+import ResetPasswordSuccess from './pages/Auth/ResetPasswordSuccess'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Auth */}
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/login-success" element={<LoginSuccess />} />
+        <Route path="/otp" element={<OtpVerification />} />
+        <Route path="/otp-success" element={<OTPSuccess />} />
+        <Route path="/tell-about-yourself" element={<TellAboutYourself />} />
+        <Route path="/profession" element={<Profession />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/resend-link" element={<ResendLink />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password-success" element={<ResetPasswordSuccess />} />
+
+        {/* Main App */}
+        <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/candidate-dashboard" element={<CandidateDashboard />} />
+        <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/input-method" element={<InputMethod />} />
@@ -40,17 +67,15 @@ function App() {
         <Route path="/jobs/submit" element={<SubmitApplicationPage />} />
         <Route path="/jobs/success" element={<ApplicationSuccess />} />
         <Route path="/jobs/submit-upload" element={<Submit />} />
+        <Route path="/match-score" element={<MatchScore />} />
+        <Route path="/interview-prep" element={<InterviewPrep />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/reports/generate" element={<GenerateReport />} />
+        <Route path="/reports/overview" element={<ReportOverview />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/settings/profile" element={<ProfileSettings />} />
         <Route path="/settings/help" element={<HelpSupport />} />
         <Route path="/logout" element={<LogOut />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/reports/generate" element={<GenerateReport />} />
-        <Route path="/reports/overview" element={<ReportOverview />} />
-        <Route path="/match-score" element={<MatchScore />} />
-        <Route path="/interview-prep" element={<InterviewPrep />} />
-        <Route path="/recruiter-dashboard" element={<RecruiterDashboard />} />
-         <Route path="/candidate-dashboard" element={<CandidateDashboard />} />
       </Routes>
     </BrowserRouter>
   )

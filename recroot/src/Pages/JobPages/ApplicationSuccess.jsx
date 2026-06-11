@@ -36,7 +36,7 @@ function ApplicationSubmittedSuccess() {
           </div>
 
           <button
-            onClick={() => {}}
+            onClick={() => navigate('/match-score')}
             className="bg-[#163C6B] text-white text-xs font-semibold px-8 py-2.5 rounded-lg hover:opacity-90 transition"
           >
             Start AI Analysis
