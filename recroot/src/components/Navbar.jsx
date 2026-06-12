@@ -19,10 +19,10 @@ function Navbar() {
       </ul>
 
       <div className="hidden md:flex items-center gap-4">
-        <a href="#login" className="text-body text-base hover:text-primary">Login</a>
-        <button className="bg-primary text-white text-sm px-5 py-2 rounded-lg hover:opacity-90 transition duration-300 cursor-pointer">
+        <Link to="/login" className="text-body text-base hover:text-primary">Login</Link>
+        <Link to="/signup" className="bg-primary text-white text-sm px-5 py-2 rounded-lg hover:opacity-90 transition duration-300 cursor-pointer">
           Get started
-        </button>
+        </Link>
       </div>
 
       <button 
@@ -39,8 +39,8 @@ function Navbar() {
           <a href="#how-it-works" onClick={() => setIsOpen(false)}>How it works</a>
           <a href="#about" onClick={() => setIsOpen(false)}>About</a>
           <hr className="border-slate-100" />
-          <a href="#login" onClick={() => setIsOpen(false)}>Login</a>
-          <button className="bg-primary text-white py-2 rounded-lg w-full">Get started</button>
+          <Link to="/login" onClick={() => setIsOpen(false)}>Login</Link>
+           <Link to="/signup" onClick={() => setIsOpen(false)} className="bg-primary text-white py-2 rounded-lg w-full text-center">Get started</Link>
         </div>
       )}
 

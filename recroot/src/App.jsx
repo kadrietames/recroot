@@ -34,12 +34,14 @@ import ResendLink from './pages/Auth/ResendLink'
 import ResetPassword from './pages/Auth/ResetPassword'
 import ResetPasswordSuccess from './pages/Auth/ResetPasswordSuccess'
 
+
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Auth */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/login-success" element={<LoginSuccess />} />
