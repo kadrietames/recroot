@@ -1,198 +1,212 @@
-const BASE_URL = 'https://recroot-backend.onrender.com'
+const BASE_URL = "https://recroot-backend.onrender.com";
 
-const getToken = () => localStorage.getItem('token')
+const getToken = () => localStorage.getItem("token");
 
-const authHeaders = () => ({
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${getToken()}`
-})
-
+const authHeaders = () => {
+  const token = getToken();
+  return {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+};
 // ===== AUTH =====
 export const signUp = async (fullName, email, password, role) => {
   const res = await fetch(`${BASE_URL}/auth/signup`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fullName, email, password, role })
-  })
-  return res.json()
-}
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fullName, email, password, role }),
+  });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Signup failed");
+  }
+
+  return data;
+};
 
 export const login = async (email, password) => {
   const res = await fetch(`${BASE_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-  })
-  const data = await res.json()
-  if (data.token) localStorage.setItem('token', data.token)
-  return data
-}
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Login failed");
+  }
+
+  if (data.token) {
+    localStorage.setItem("token", data.token);
+  }
+  return data;
+};
 
 export const verifyOTP = async (email, code) => {
   const res = await fetch(`${BASE_URL}/auth/verify-otp`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, otp: code })
-  })
-  return res.json()
-}
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, otp: code }),
+  });
+  return res.json();
+};
 
 export const resendOTP = async (email) => {
   const res = await fetch(`${BASE_URL}/auth/resend-otp`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  })
-  return res.json()
-}
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  return res.json();
+};
 
 export const forgotPassword = async (email) => {
   const res = await fetch(`${BASE_URL}/auth/forgot-password`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  })
-  return res.json()
-}
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  return res.json();
+};
 
 export const resetPassword = async (token, newPassword) => {
   const res = await fetch(`${BASE_URL}/auth/reset-password`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token, newPassword })
-  })
-  return res.json()
-}
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, newPassword }),
+  });
+  return res.json();
+};
 
 export const updateProfile = async (profileData) => {
   const res = await fetch(`${BASE_URL}/auth/update-profile`, {
-    method: 'PUT',
+    method: "PUT",
     headers: authHeaders(),
-    body: JSON.stringify(profileData)
-  })
-  return res.json()
-}
+    body: JSON.stringify(profileData),
+  });
+  return res.json();
+};
 
 // ===== RESUMES =====
 export const uploadResume = async (file) => {
-  const formData = new FormData()
-  formData.append('resume', file)
+  const formData = new FormData();
+  formData.append("resume", file);
   const res = await fetch(`${BASE_URL}/resumes/upload`, {
-    method: 'POST',
-    headers: { 'Authorization': `Bearer ${getToken()}` },
-    body: formData
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data.data || data
-}
+    method: "POST",
+    headers: { Authorization: `Bearer ${getToken()}` },
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data.data || data;
+};
 
 export const getMyResumes = async () => {
   const res = await fetch(`${BASE_URL}/resumes/my-resumes`, {
-    headers: authHeaders()
-  })
-  const data = await res.json()
-if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-return data.data || data
-}
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data.data || data;
+};
 
 export const deleteResume = async (id) => {
   const res = await fetch(`${BASE_URL}/resumes/${id}`, {
-    method: 'DELETE',
-    headers: authHeaders()
-  })
-  return res.json()
-}
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  return res.json();
+};
 
 // ===== JOBS =====
 export const createJob = async (title, description) => {
   const res = await fetch(`${BASE_URL}/jobs/create-job`, {
-    method: 'POST',
+    method: "POST",
     headers: authHeaders(),
-    body: JSON.stringify({ title, description })
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data.job || data
-}
+    body: JSON.stringify({ title, description }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data.job || data;
+};
 
 export const getJobs = async () => {
   const res = await fetch(`${BASE_URL}/jobs`, {
-    headers: authHeaders()
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data
-}
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data;
+};
 
 export const deleteJob = async (id) => {
   const res = await fetch(`${BASE_URL}/jobs/${id}`, {
-    method: 'DELETE',
-    headers: authHeaders()
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data
-}
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data;
+};
 
 export const extractJob = async (description) => {
   const res = await fetch(`${BASE_URL}/jobs/extract`, {
-    method: 'POST',
+    method: "POST",
     headers: authHeaders(),
-   body: JSON.stringify({ jobDescription: description })
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data.data
-}
+    body: JSON.stringify({ jobDescription: description }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data.data;
+};
 
 // ===== SCORING =====
 export const scoreResume = async (resumeId, jobDescription) => {
   const res = await fetch(`${BASE_URL}/scoring/score`, {
-    method: 'POST',
+    method: "POST",
     headers: authHeaders(),
-    body: JSON.stringify({ resumeId, jobDescription })
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data.data
-}
+    body: JSON.stringify({ resumeId, jobDescription }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data.data;
+};
 
 // ===== INTERVIEWS =====
 export const generateInterview = async (resumeId, jobDescription, jobRole) => {
   const res = await fetch(`${BASE_URL}/interviews/generate`, {
-    method: 'POST',
+    method: "POST",
     headers: authHeaders(),
-    body: JSON.stringify({ resumeId, jobDescription, jobRole })
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data
-}
+    body: JSON.stringify({ resumeId, jobDescription, jobRole }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data;
+};
 
 export const getInterviews = async () => {
   const res = await fetch(`${BASE_URL}/interviews`, {
-    headers: authHeaders()
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data
-}
-
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
+  return data;
+};
 
 // ===== APPLICATIONS =====
 export const applyForJob = async (jobId, resumeId) => {
   const res = await fetch(`${BASE_URL}/applications/apply`, {
-    method: 'POST',
+    method: "POST",
     headers: authHeaders(),
-    body: JSON.stringify({ jobId, resumeId })
-  })
-  return res.json()
-}
+    body: JSON.stringify({ jobId, resumeId }),
+  });
+  return res.json();
+};
 
 export const getMyApplications = async () => {
   const res = await fetch(`${BASE_URL}/applications/my-applications`, {
-    headers: authHeaders()
-  })
-  return res.json()
-}
+    headers: authHeaders(),
+  });
+  return res.json();
+};

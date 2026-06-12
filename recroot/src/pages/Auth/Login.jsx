@@ -1,43 +1,45 @@
-import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import AuthLayout from './AuthLayout'
-import { login } from '../../api/recroot'
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import AuthLayout from "./AuthLayout";
+import { login } from "../../api/recroot";
 
 function Login() {
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [rememberMe, setRememberMe] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
     if (!form.email || !form.password) {
-      setError('Please fill in all fields.')
-      return
+      setError("Please fill in all fields.");
+      return;
     }
-    setLoading(true)
+    setLoading(true);
     try {
-      const data = await login(form.email, form.password)
-      if (data.error || !data.token) {
-        setError(data.message || 'Invalid email or password.')
-      } else {
-        const name = data.user?.fullName || data.user?.name || form.email.split('@')[0]
-        localStorage.setItem('userName', name)
-        localStorage.setItem('userEmail', form.email)
-        if (rememberMe) localStorage.setItem('rememberMe', 'true')
-        navigate('/login-success', { state: { name } })
+      const data = await login(form.email, form.password);
+      const name =
+        data.user?.fullName || data.user?.name || form.email.split("@")[0];
+
+      localStorage.setItem("userName", name);
+      localStorage.setItem("userEmail", form.email);
+
+      if (rememberMe) {
+        localStorage.setItem("rememberMe", "true");
       }
+      navigate("/login-success", { state: { name } });
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <AuthLayout>
@@ -53,7 +55,9 @@ function Login() {
 
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
-          <label htmlFor="email" className="text-slate-500 text-sm font-medium">Email Address</label>
+          <label htmlFor="email" className="text-slate-500 text-sm font-medium">
+            Email Address
+          </label>
           <input
             type="email"
             id="email"
@@ -66,10 +70,15 @@ function Login() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label htmlFor="password" className="text-slate-500 text-sm font-medium">Password</label>
+          <label
+            htmlFor="password"
+            className="text-slate-500 text-sm font-medium"
+          >
+            Password
+          </label>
           <div className="relative w-full">
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               id="password"
               name="password"
               value={form.password}
@@ -82,7 +91,7 @@ function Login() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 text-xs transition"
             >
-              {showPassword ? '👁' : '👁‍🗨'}
+              {showPassword ? "👁" : "👁‍🗨"}
             </button>
           </div>
         </div>
@@ -97,7 +106,10 @@ function Login() {
             />
             <span className="text-xs">Remember Me</span>
           </label>
-          <Link to="/forgot-password" className="text-slate-700 font-medium hover:underline text-xs">
+          <Link
+            to="/forgot-password"
+            className="text-slate-700 font-medium hover:underline text-xs"
+          >
             Forgot Password?
           </Link>
         </div>
@@ -106,19 +118,26 @@ function Login() {
           type="submit"
           disabled={loading}
           className={`w-full h-[48px] text-white font-medium rounded-lg transition-colors mt-6 text-sm shadow-sm ${
-            loading ? 'bg-[#183c6b]/60 cursor-not-allowed' : 'bg-[#183c6b] hover:bg-[#133055]'
+            loading
+              ? "bg-[#183c6b]/60 cursor-not-allowed"
+              : "bg-[#183c6b] hover:bg-[#133055]"
           }`}
         >
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
 
       <p className="text-slate-500 text-sm text-center mt-8">
-        Don't have an account?{' '}
-        <Link to="/signup" className="text-[#183c6b] font-semibold hover:underline">Sign up</Link>
+        Don't have an account?{" "}
+        <Link
+          to="/signup"
+          className="text-[#183c6b] font-semibold hover:underline"
+        >
+          Sign up
+        </Link>
       </p>
     </AuthLayout>
-  )
+  );
 }
 
-export default Login
+export default Login;

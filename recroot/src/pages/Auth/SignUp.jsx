@@ -1,50 +1,60 @@
-import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import AuthLayout from './AuthLayout'
-import { signUp } from '../../api/recroot'
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import AuthLayout from "./AuthLayout";
+import { signUp } from "../../api/recroot";
 
 function SignUp() {
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
-  const [agreed, setAgreed] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [agreed, setAgreed] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+    e.preventDefault();
+    setError("");
     if (!form.name || !form.email || !form.password || !form.confirmPassword) {
-      setError('Please fill in all fields.')
-      return
+      setError("Please fill in all fields.");
+      return;
     }
     if (form.password !== form.confirmPassword) {
-      setError('Passwords do not match.')
-      return
+      setError("Passwords do not match.");
+      return;
     }
     if (!agreed) {
-      setError('Please agree to the Terms of use and Privacy policy.')
-      return
+      setError("Please agree to the Terms of use and Privacy policy.");
+      return;
     }
-    setLoading(true)
+    setLoading(true);
     try {
-      const data = await signUp(form.name, form.email, form.password, 'candidate')
-      if (data.error || data.message === 'error') {
-        setError(data.message || 'Sign up failed. Please try again.')
-      } else {
-        localStorage.setItem('userName', form.name)
-        localStorage.setItem('userEmail', form.email)
-        navigate('/login')
+      const data = await signUp(
+        form.name,
+        form.email,
+        form.password,
+        "candidate",
+      );
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
       }
+
+      navigate("/login");
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError(err.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <AuthLayout>
@@ -60,7 +70,9 @@ function SignUp() {
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="name" className="text-slate-500 text-xs font-medium">Your Name</label>
+          <label htmlFor="name" className="text-slate-500 text-xs font-medium">
+            Your Name
+          </label>
           <input
             type="text"
             id="name"
@@ -73,7 +85,9 @@ function SignUp() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="email" className="text-slate-500 text-xs font-medium">Email Address</label>
+          <label htmlFor="email" className="text-slate-500 text-xs font-medium">
+            Email Address
+          </label>
           <input
             type="email"
             id="email"
@@ -86,10 +100,12 @@ function SignUp() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="pass" className="text-slate-500 text-xs font-medium">Create Password</label>
+          <label htmlFor="pass" className="text-slate-500 text-xs font-medium">
+            Create Password
+          </label>
           <div className="relative">
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               id="pass"
               name="password"
               value={form.password}
@@ -97,17 +113,26 @@ function SignUp() {
               placeholder="Create a strong password"
               className="w-full h-[44px] pl-4 pr-10 bg-white rounded-lg border border-slate-200 outline-none text-sm placeholder:text-slate-300 focus:border-[#183c6b]"
             />
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 text-xs">
-              {showPassword ? '👁' : '👁‍🗨'}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 text-xs"
+            >
+              {showPassword ? "👁" : "👁‍🗨"}
             </button>
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="confirmPass" className="text-slate-500 text-xs font-medium">Confirm Password</label>
+          <label
+            htmlFor="confirmPass"
+            className="text-slate-500 text-xs font-medium"
+          >
+            Confirm Password
+          </label>
           <div className="relative">
             <input
-              type={showConfirm ? 'text' : 'password'}
+              type={showConfirm ? "text" : "password"}
               id="confirmPass"
               name="confirmPassword"
               value={form.confirmPassword}
@@ -115,8 +140,12 @@ function SignUp() {
               placeholder="Re-enter your password"
               className="w-full h-[44px] pl-4 pr-10 bg-white rounded-lg border border-slate-200 outline-none text-sm placeholder:text-slate-300 focus:border-[#183c6b]"
             />
-            <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 text-xs">
-              {showConfirm ? '👁' : '👁‍🗨'}
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 text-xs"
+            >
+              {showConfirm ? "👁" : "👁‍🗨"}
             </button>
           </div>
         </div>
@@ -129,11 +158,24 @@ function SignUp() {
             onChange={(e) => setAgreed(e.target.checked)}
             className="mt-0.5 w-4 h-4 text-[#183c6b] border-slate-300 rounded focus:ring-[#183c6b]"
           />
-          <label htmlFor="terms" className="text-slate-500 text-xs leading-normal select-none">
-            I agree to the{' '}
-            <a href="/terms" className="text-blue-500 hover:underline font-medium">Terms of use</a>
-            {' '}and{' '}
-            <a href="/privacy" className="text-blue-500 hover:underline font-medium">Privacy</a>
+          <label
+            htmlFor="terms"
+            className="text-slate-500 text-xs leading-normal select-none"
+          >
+            I agree to the{" "}
+            <a
+              href="/terms"
+              className="text-blue-500 hover:underline font-medium"
+            >
+              Terms of use
+            </a>{" "}
+            and{" "}
+            <a
+              href="/privacy"
+              className="text-blue-500 hover:underline font-medium"
+            >
+              Privacy
+            </a>
           </label>
         </div>
 
@@ -141,19 +183,23 @@ function SignUp() {
           type="submit"
           disabled={loading}
           className={`w-full h-[46px] text-white font-medium rounded-lg transition-colors mt-4 text-sm ${
-            loading ? 'bg-[#183c6b]/60 cursor-not-allowed' : 'bg-[#183c6b] hover:bg-[#133055]'
+            loading
+              ? "bg-[#183c6b]/60 cursor-not-allowed"
+              : "bg-[#183c6b] hover:bg-[#133055]"
           }`}
         >
-          {loading ? 'Creating account...' : 'Continue'}
+          {loading ? "Creating account..." : "Continue"}
         </button>
       </form>
 
       <p className="text-slate-500 text-xs text-center mt-6">
-        Already have an account?{' '}
-        <Link to="/login" className="text-[#183c6b] font-bold hover:underline">Log In</Link>
+        Already have an account?{" "}
+        <Link to="/login" className="text-[#183c6b] font-bold hover:underline">
+          Log In
+        </Link>
       </p>
     </AuthLayout>
-  )
+  );
 }
 
-export default SignUp
+export default SignUp;
