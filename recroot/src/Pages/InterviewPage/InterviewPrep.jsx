@@ -26,29 +26,31 @@ function InterviewPrep() {
   const [generatedQuestions, setGeneratedQuestions] = useState([]);
   const [historicalLogs, setHistoricalLogs] = useState([]);
 
+  // Fetch critical dashboard metrics on mount
   useEffect(() => {
     async function fetchDashboardMetadata() {
       try {
-        const resumeData = await getMyResumes();
-        if (resumeData && resumeData.length > 0) {
-          const currentResume = resumeData[0];
-          setActiveResumeId(currentResume.id || currentResume._id);
-          setHasUploadedResume(true);
-          setRoleDetails({
-            title: currentResume.inferredRole || 'Senior Product Designer',
-            experience: currentResume.experienceLength || '2+ years',
-            skills: currentResume.skills?.join(', ') || 'Prototyping, system design',
-            status: 'Uploaded'
-          });
-        } else {
-          setHasUploadedResume(false);
-          setRoleDetails(prev => ({ ...prev, status: 'No Resume Active' }));
-        }
+        
+        const interviewData = await getInterviews()
 
-        const interviewData = await getInterviews();
+          const resumeId = localStorage.getItem('resumeId')
+          if (resumeId) {
+            setActiveResumeId(resumeId)
+            setHasUploadedResume(true)
+            setRoleDetails({
+              title: 'Virtual Assistant',
+              experience: '1+ years',
+              skills: 'Google Workspace, Trello, Notion',
+              status: 'Uploaded'
+            })
+          } else {
+            setHasUploadedResume(false)
+            setRoleDetails(prev => ({ ...prev, status: 'No Resume Active' }))
+          }
+
         if (Array.isArray(interviewData)) {
           const formattedLogs = interviewData.map((log, index) => ({
-            id: log.id || log._id || index,
+            id: log.id || log._id || `log-${index}`,
             type: log.jobRole || 'AI Interview',
             date: log.createdAt ? new Date(log.createdAt).toLocaleDateString('en-US', {
               month: 'short', day: 'numeric', year: 'numeric'
@@ -66,19 +68,19 @@ function InterviewPrep() {
     fetchDashboardMetadata();
   }, []);
 
-  // Derived stats from real data
+  // Derived stats from real log historical states
   const totalQuestions = historicalLogs.length > 0
     ? historicalLogs.length * (generatedQuestions.length || 4)
-    : 20
+    : 20;
   const goodAnswers = historicalLogs.length > 0
     ? historicalLogs.filter(l => l.status === 'good').length * 4
-    : 17
+    : 17;
   const needsImprovement = historicalLogs.length > 0
     ? historicalLogs.filter(l => l.status === 'bad').length * 2
-    : 3
+    : 3;
   const overallScore = historicalLogs.length > 0
     ? Math.round(historicalLogs.reduce((acc, cur) => acc + cur.score, 0) / historicalLogs.length)
-    : 85
+    : 85;
 
   const weeklyProgress = historicalLogs.length > 0
     ? historicalLogs.slice(-4).map((log, i, arr) => ({
@@ -92,40 +94,74 @@ function InterviewPrep() {
         { label: 'Week 2', value: 40, height: 56, isLatest: false },
         { label: 'Week 3', value: 54, height: 80, isLatest: false },
         { label: 'This Week', value: 75, height: 112, isLatest: true },
-      ]
+      ];
 
   const handleInitializeGeneration = async (targetRoleTitle, jobDescriptionText) => {
-    if (!hasUploadedResume) {
-      setErrorMessage('Please upload a resume on the profile screen before initializing calculations.');
-      return;
-    }
-    setGenerationLoading(true);
-    setErrorMessage('');
+  if (!hasUploadedResume) {
+    setErrorMessage('Please upload a resume on the profile screen before initializing calculations.');
+    return;
+  }
+  setGenerationLoading(true);
+  setErrorMessage('');
+  try {
+    // Wake the server first
     try {
-      const response = await generateInterview(
-        activeResumeId,
-        jobDescriptionText || `${roleDetails.skills}. Role target context: ${targetRoleTitle || roleDetails.title}`,
-        targetRoleTitle || roleDetails.title
-      );
-      if (response && response.questions) {
-        setGeneratedQuestions(response.questions.map((q, idx) => ({
-          id: Date.now() + idx,
-          prompt: typeof q === 'string' ? q : q.prompt
-        })));
-      } else {
-        setGeneratedQuestions([
-          { id: 1, prompt: `Why are you interested in a ${targetRoleTitle || roleDetails.title} position?` },
-          { id: 2, prompt: `Describe your hands-on proficiency executing work tasks utilizing: ${roleDetails.skills}.` },
-          { id: 3, prompt: 'Can you detail an execution friction conflict handled with cross-functional team profiles?' }
-        ]);
-      }
-      setActiveStep(2);
-    } catch (err) {
-      console.error('Generation request failure:', err);
-      setErrorMessage('Server timed out processing data attributes. Please try again.');
-    } finally {
-      setGenerationLoading(false);
-    }
+      await fetch('https://recroot-backend.onrender.com/interviews')
+    } catch (_) {}
+    // Wait 2 seconds then generate
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    const response = await generateInterview(
+      activeResumeId,
+      jobDescriptionText || `${roleDetails.skills}. Role target context: ${targetRoleTitle || roleDetails.title}`,
+      targetRoleTitle || roleDetails.title
+    );
+      
+     if (response && response.questions) {
+  setGeneratedQuestions(response.questions.map((q, idx) => ({
+    id: `gen-q-${idx}-${String(Math.random()).slice(2, 7)}`, 
+    prompt: typeof q === 'string' ? q : q.prompt
+  })));
+} else {
+  setGeneratedQuestions([
+    { id: 'fallback-1', prompt: `Why are you interested in a ${targetRoleTitle || roleDetails.title} position?` },
+    { id: 'fallback-2', prompt: `Describe your hands-on proficiency executing work tasks utilizing: ${roleDetails.skills}.` },
+    { id: 'fallback-3', prompt: 'Can you detail an execution friction conflict handled with cross-functional team profiles?' }
+  ]);
+}
+setActiveStep(2);
+} catch (err) {
+  console.error('Generation request failure:', err)
+  setGeneratedQuestions([
+    { id: 'fallback-1', prompt: `Why are you interested in a ${targetRoleTitle || roleDetails.title} position?` },
+    { id: 'fallback-2', prompt: `What tools and systems have you used: ${roleDetails.skills}?` },
+    { id: 'fallback-3', prompt: 'Describe a challenging situation and how you resolved it.' }
+  ])
+  setActiveStep(2)
+} finally {
+  setGenerationLoading(false);
+}
+};
+
+  const handleQuestionChange = (index, value) => {
+    setGeneratedQuestions(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], prompt: value };
+      return updated;
+    });
+  };
+
+  const handleAddQuestion = () => {
+    if (generatedQuestions.length >= 5) return;
+    setGeneratedQuestions(prev => [
+      ...prev,
+      { id: `custom-q-${Date.now()}`, prompt: 'Custom Interview Question prompt...' }
+    ]);
+  };
+
+  const handleNavigationReset = (step) => {
+    setErrorMessage('');
+    setActiveStep(step);
   };
 
   const completePracticeSession = () => setActiveStep(3);
@@ -137,7 +173,7 @@ function InterviewPrep() {
         {/* Header */}
         <div className="flex flex-col gap-0.5">
           <button
-            onClick={() => setActiveStep(1)}
+            onClick={() => handleNavigationReset(1)}
             className="text-[11px] font-bold text-slate-400 hover:text-slate-700 self-start flex items-center gap-1 transition"
           >
             ← Back to Dashboard
@@ -242,11 +278,7 @@ function InterviewPrep() {
                   <input
                     type="text"
                     value={q.prompt}
-                    onChange={(e) => {
-                      const updated = [...generatedQuestions];
-                      updated[idx].prompt = e.target.value;
-                      setGeneratedQuestions(updated);
-                    }}
+                    onChange={(e) => handleQuestionChange(idx, e.target.value)}
                     className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none"
                   />
                 </div>
@@ -255,7 +287,7 @@ function InterviewPrep() {
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-4">
               <button
-                onClick={() => setGeneratedQuestions([...generatedQuestions, { id: Date.now(), prompt: 'Custom Interview Question prompt...' }])}
+                onClick={handleAddQuestion}
                 disabled={generatedQuestions.length >= 5}
                 className="px-3 py-1.5 text-[10px] font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-md transition disabled:opacity-40"
               >
@@ -300,7 +332,7 @@ function InterviewPrep() {
                 <div className="absolute left-2 top-1/2 -translate-y-1/2 text-[8px] font-mono text-slate-300">50%</div>
                 <div className="absolute left-2 bottom-1 text-[8px] font-mono text-slate-300">0%</div>
                 {weeklyProgress.map((week, i) => (
-                  <div key={i} className="flex flex-col items-center gap-1 w-12 relative">
+                  <div key={`week-${i}`} className="flex flex-col items-center gap-1 w-12 relative">
                     <span className={`text-[9px] font-bold absolute -top-4 ${week.isLatest ? 'text-emerald-600' : 'text-slate-500'}`}>
                       {week.value}%
                     </span>
@@ -318,7 +350,7 @@ function InterviewPrep() {
 
             <div className="flex justify-center">
               <button
-                onClick={() => setActiveStep(1)}
+                onClick={() => handleNavigationReset(1)}
                 className="px-5 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-lg hover:bg-slate-800 transition"
               >
                 Return to Setup Dashboard

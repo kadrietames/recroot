@@ -18,7 +18,8 @@ function CandidateDashboard() {
           getMyResumes()
         ])
         setApplications(Array.isArray(appsData) ? appsData : [])
-        setResume(Array.isArray(resumeData) ? resumeData?.[0] || null : null)
+        const resumeList = Array.isArray(resumeData) ? resumeData : resumeData?.resumes || []
+        setResume(resumeList[0] || null)
       } catch (err) {
         console.error('Failed to fetch dashboard data', err)
         setApplications([])

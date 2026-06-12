@@ -1,47 +1,72 @@
 import React, { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
 import { applyForJob, getMyResumes } from '../../api/recroot'
 
 function JobMatchPage() {
   const navigate = useNavigate()
   const { state } = useLocation()
-  const job = state?.job
-  const score = state?.score
-  const form = state?.form
+  
+  
+  const job = state?.job || {}
+  const score = state?.score || {}
+  const form = state?.form || {}
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
- const handleApply = async () => {
-  setLoading(true)
-  setError('')
-  try {
-    const resumes = await getMyResumes()
-    const list = Array.isArray(resumes) ? resumes : resumes.resumes || []
-    const resumeId = list[0]?.id || list[0]?._id
-    if (!resumeId) {
-      setError('No resume found. Please upload your resume first.')
-      setLoading(false)
+  const handleApply = async () => {
+
+    const targetJobId = job.id || job._id
+    
+    if (!targetJobId) {
+      setError('Critical Error: Valid Job Identifier reference is missing.')
       return
     }
-    const data = await applyForJob(job?.id || job?._id, resumeId)
-    navigate('/jobs/submit', { state: { job, score, applicationId: data.id || data._id } })
-  } catch (err) {
-    setError(err.message || 'Application failed. Please try again.')
-  } finally {
-    setLoading(false)
+
+    setLoading(true)
+    setError('')
+    
+    try {
+      
+      const resumeId = localStorage.getItem('resumeId')
+
+      if (!resumeId) {
+        setError('No resume found. Please upload your resume first.')
+        setLoading(false)
+        return
+      }
+      
+      const data = await applyForJob(targetJobId, resumeId)
+      
+      
+      const confirmationId = data?.id || data?._id || 'confirmation-success'
+      
+     
+      navigate('/jobs/submit', { 
+        state: { 
+          job, 
+          score, 
+          applicationId: confirmationId 
+        } 
+      })
+    } catch (err) {
+      console.error('Job system validation drop error:', err)
+      setError(err.message || 'Application failed. Please check backend link status and try again.')
+    } finally {
+      setLoading(false)
+    }
   }
-}
+
   return (
     <DashboardLayout activePage="jobs">
       <div className="max-w-5xl mx-auto px-4 sm:px-2 pt-1 pb-6 text-left">
 
         <div className="w-full mb-5">
           <div className="mb-2">
-            <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
+            <Link to="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
               <span className="text-sm">←</span> Back to Dashboard
-            </a>
+            </Link>
           </div>
           <h1 className="text-[#0f2537] text-xl sm:text-2xl font-bold tracking-tight mb-0.5">Job Match</h1>
           <p className="text-slate-400 text-xs font-medium">Job match overview</p>
@@ -76,13 +101,14 @@ function JobMatchPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="border border-slate-300 text-slate-600 text-xs font-semibold px-4 py-1.5 rounded-lg hover:bg-slate-50 transition">
+            <button type="button" className="border border-slate-300 text-slate-600 text-xs font-semibold px-4 py-1.5 rounded-lg hover:bg-slate-50 transition cursor-pointer">
               Save
             </button>
             <button
+              type="button"
               onClick={handleApply}
               disabled={loading}
-              className={`text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition ${
+              className={`text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition cursor-pointer ${
                 loading ? 'bg-[#163C6B]/60 cursor-not-allowed' : 'bg-[#163C6B] hover:opacity-90'
               }`}
             >
@@ -91,7 +117,11 @@ function JobMatchPage() {
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-xs mb-3">{error}</p>}
+        {error && (
+          <div className="bg-red-50 text-red-500 border border-red-100 text-xs font-medium px-4 py-2 rounded-lg mb-3">
+            {error}
+          </div>
+        )}
 
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-[#0f2537] text-sm font-bold">Job Overview</h3>

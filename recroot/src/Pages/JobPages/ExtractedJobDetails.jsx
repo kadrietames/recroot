@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
 import jobTitle from '../../assets/jobtitle.png'
 import jobType from '../../assets/jobtype.png'
@@ -8,7 +8,8 @@ import skills from '../../assets/skills.png'
 import responsibilities from '../../assets/responsibilities.png'
 import education from '../../assets/education.png'
 import experience from '../../assets/experience.png'
-import { scoreResume, getMyResumes } from '../../api/recroot'
+import { extractJob } from '../../api/recroot'
+
 
 function ExtractedJobDetails() {
   const navigate = useNavigate()
@@ -22,32 +23,31 @@ function ExtractedJobDetails() {
   useEffect(() => {
     const fetchScore = async () => {
       try {
-        const resumes = await getMyResumes()
-        const resumeId = resumes[0]?.id || resumes[0]?._id
-        if (!resumeId) {
-          setError('No resume found. Please upload your resume first.')
-          setLoading(false)
-          return
-        }
-        const result = await scoreResume(resumeId, job?.description)
+        const result = await extractJob(job?.description)
         setScore(result)
       } catch (err) {
-        setError('Could not score resume. Please try again.')
+        console.error('Extraction failed:', err)
+        setError('Could not extract job details. Please try again.')
       } finally {
         setLoading(false)
       }
     }
-    if (job) { fetchScore() } else { setLoading(false) }
-  }, [])
+
+    if (job) {
+      fetchScore()
+    } else {
+      setLoading(false)
+    }
+  }, [job])
 
   const details = [
-    { icon: jobTitle, label: 'Job Title', value: job?.title || 'Senior Product Designer' },
-    { icon: experience, label: 'Experience', value: score?.experience || '2+ years' },
-    { icon: jobType, label: 'Job Type', value: score?.jobType || 'Remote' },
-    { icon: education, label: 'Education', value: score?.education || 'B. Tech in Information Technology' },
-    { icon: skills, label: 'Skills', value: score?.skills || 'Prototyping, soft skills' },
+    { icon: jobTitle, label: 'Job Title', value: score?.jobTitle || job?.title },
+    { icon: experience, label: 'Experience', value: score?.experience },
+    { icon: jobType, label: 'Job Type', value: score?.jobType },
+    { icon: education, label: 'Education', value: score?.education },
+    { icon: skills, label: 'Skills', value: Array.isArray(score?.keySkills) ? score.keySkills.join(', ') : score?.skills },
     { icon: location, label: 'Location', value: score?.location || 'Not Specified' },
-    { icon: responsibilities, label: 'Key Responsibilities', value: score?.responsibilities || '6 Identified' },
+    { icon: responsibilities, label: 'Key Responsibilities', value: score?.responsibilities },
   ]
 
   return (
@@ -56,9 +56,9 @@ function ExtractedJobDetails() {
 
         <div className="w-full mb-5">
           <div className="mb-2">
-            <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
+            <Link to="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
               <span className="text-sm">←</span> Back to Dashboard
-            </a>
+            </Link>
           </div>
           <h1 className="text-[#0f2537] text-xl sm:text-2xl font-bold tracking-tight mb-0.5">Job Details Extracted</h1>
           <p className="text-slate-400 text-xs font-medium">We have extracted key information from the job description</p>
@@ -89,9 +89,9 @@ function ExtractedJobDetails() {
         <div className="max-w-[570px] mx-auto">
           <div className="bg-[#f8fafc]/50 border border-slate-200 rounded-xl p-5 sm:p-8 shadow-sm">
             {loading ? (
-              <p className="text-slate-400 text-xs text-center py-6">Analyzing your resume...</p>
+              <p className="text-slate-400 text-xs text-center py-6 animate-pulse">Analyzing your resume against requirements...</p>
             ) : error ? (
-              <p className="text-red-500 text-xs text-center py-6">{error}</p>
+              <p className="text-red-500 text-xs text-center py-6 font-medium">{error}</p>
             ) : (
               details.map((item, index) => (
                 <div key={index} className="flex items-center justify-between px-3 sm:px-4 py-3 border border-slate-100 rounded-lg bg-[#f0f4f8] mb-2 gap-2">
@@ -107,7 +107,12 @@ function ExtractedJobDetails() {
 
           <button
             onClick={() => navigate('/jobs/confirm', { state: { job, score } })}
-            className="w-full mt-4 bg-[#163C6B] text-white py-2.5 rounded-lg text-xs font-semibold hover:opacity-90 transition"
+            disabled={loading || !!error}
+            className={`w-full mt-4 text-white py-2.5 rounded-lg text-xs font-semibold transition ${
+              loading || !!error 
+                ? 'bg-[#163C6B]/60 cursor-not-allowed' 
+                : 'bg-[#163C6B] hover:opacity-90 cursor-pointer'
+            }`}
           >
             Confirm & Continue
           </button>

@@ -84,14 +84,16 @@ export const uploadResume = async (file) => {
   })
   const data = await res.json()
   if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
-  return data
+  return data.data || data
 }
 
 export const getMyResumes = async () => {
   const res = await fetch(`${BASE_URL}/resumes/my-resumes`, {
     headers: authHeaders()
   })
-  return res.json()
+  const data = await res.json()
+if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+return data.data || data
 }
 
 export const deleteResume = async (id) => {
@@ -104,19 +106,23 @@ export const deleteResume = async (id) => {
 
 // ===== JOBS =====
 export const createJob = async (title, description) => {
-  const res = await fetch(`${BASE_URL}/jobs`, {
+  const res = await fetch(`${BASE_URL}/jobs/create-job`, {
     method: 'POST',
     headers: authHeaders(),
     body: JSON.stringify({ title, description })
   })
-  return res.json()
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+  return data.job || data
 }
 
 export const getJobs = async () => {
   const res = await fetch(`${BASE_URL}/jobs`, {
     headers: authHeaders()
   })
-  return res.json()
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+  return data
 }
 
 export const deleteJob = async (id) => {
@@ -124,7 +130,20 @@ export const deleteJob = async (id) => {
     method: 'DELETE',
     headers: authHeaders()
   })
-  return res.json()
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+  return data
+}
+
+export const extractJob = async (description) => {
+  const res = await fetch(`${BASE_URL}/jobs/extract`, {
+    method: 'POST',
+    headers: authHeaders(),
+   body: JSON.stringify({ jobDescription: description })
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+  return data.data
 }
 
 // ===== SCORING =====

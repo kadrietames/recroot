@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
 import { createJob } from '../../api/recroot'
 
@@ -11,47 +11,36 @@ function EmptyState() {
 
   const isGoodLength = text.length >= 100
 
-  const handleAnalyze = async () => {
+  
+ const handleAnalyze = async () => {
   if (!isGoodLength) return
+  
   setLoading(true)
   setError('')
+  
   try {
-    const res = await fetch('https://recroot-backend.onrender.com/jobs', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify({ title: 'Job Description', description: text })
-    })
-
-    const data = await res.json()
-
-    if (!res.ok) {
-      setError(data.message || `Error ${res.status}: Something went wrong.`)
-      return
-    }
+    const data = await createJob('Job Description', text)
     console.log('createJob response:', data)
-    navigate('/jobs/extracted', { state: { job: data } })
+    navigate('/jobs/extracted', { state: { job: { ...data, description: text } } })
   } catch (err) {
-    setError('Network error — check your connection and try again.')
+    console.error('Job analysis network failure:', err)
+    setError(err.message || 'Network error — check your connection and try again.')
   } finally {
     setLoading(false)
   }
 }
-
   return (
     <DashboardLayout activePage="jobs">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-1 pb-6 text-left">
 
         <div className="w-full mb-5">
           <div className="mb-2">
-            <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
+            <Link to="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
               <span className="text-sm">←</span> Back to Dashboard
-            </a>
+            </Link>
           </div>
           <h1 className="text-[#0f2537] text-xl sm:text-2xl font-bold tracking-tight mb-0.5">Upload Job Description</h1>
-          <p className="text-slate-400 text-xs font-medium">Drag and drop your resume here</p>
+          <p className="text-slate-400 text-xs font-medium">Paste the job details below to evaluate alignment</p>
         </div>
 
         <div className="flex items-center justify-start gap-1.5 sm:gap-2 mb-6 py-1 overflow-x-auto">
@@ -111,4 +100,4 @@ function EmptyState() {
   )
 }
 
-export default EmptyState
+export default EmptyState;

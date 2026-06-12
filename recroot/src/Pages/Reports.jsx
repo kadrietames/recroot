@@ -24,7 +24,7 @@ function Reports() {
         const list = Array.isArray(resumes) ? resumes : resumes.resumes || []
         if (list.length > 0) setResume(list[0])
       } catch (err) {
-    console.error('Failed to fetch resumes:', err)
+        console.error('Failed to fetch resumes:', err)
       }
     }
     fetchResume()
@@ -36,9 +36,12 @@ function Reports() {
 
         <div className="w-full mb-5">
           <div className="mb-2">
-            <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
+            <button 
+              onClick={() => navigate('/dashboard')}
+              className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors bg-transparent border-none p-0 cursor-pointer"
+            >
               <span className="text-sm">←</span> Back to Dashboard
-            </a>
+            </button>
           </div>
           <div>
             <h1 className="text-[#0f2537] text-xl sm:text-2xl font-bold tracking-tight mb-0.5">Create New Report</h1>
@@ -103,14 +106,19 @@ function Reports() {
                 </div>
                 <div>
                   <p className="text-[#0f2537] text-xs font-semibold">
-                    {resume?.filename || resume?.name || 'No resume uploaded'}
+                    {resume?.filename || resume?.name || 'Active Workspace Resume'}
                   </p>
                   <p className="text-slate-400 text-[10px]">
-                    {resume?.jobTitle || resume?.title || 'Your resume'}
+                    {resume?.inferredRole || resume?.jobTitle || resume?.title || 'Saved Profile'}
                   </p>
                 </div>
               </div>
-              <button className="text-[#163C6B] text-xs font-semibold hover:opacity-70 transition">Change</button>
+              <button 
+                onClick={() => navigate('/profile')} 
+                className="text-[#163C6B] text-xs font-semibold hover:opacity-70 transition bg-transparent border-none cursor-pointer"
+              >
+                Change
+              </button>
             </div>
 
             <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg px-4 py-3 mb-5 shadow-sm">
@@ -120,14 +128,21 @@ function Reports() {
                 </div>
                 <div>
                   <p className="text-[#0f2537] text-xs font-semibold">Job Description</p>
-                  <p className="text-slate-400 text-[10px]">No job selected</p>
+                  <p className="text-slate-400 text-[10px]">
+                    {resume?.targetJobDescription?.slice(0, 45) || 'Active Target Interview Position'}...
+                  </p>
                 </div>
               </div>
-              <button className="text-[#163C6B] text-xs font-semibold hover:opacity-70 transition">Change</button>
+              <button 
+                onClick={() => navigate('/interview-prep')} 
+                className="text-[#163C6B] text-xs font-semibold hover:opacity-70 transition bg-transparent border-none cursor-pointer"
+              >
+                Change
+              </button>
             </div>
 
             <button
-              onClick={() => navigate('/reports/generate')}
+              onClick={() => navigate('/reports/generate', { state: { reportType: selected, resumeId: resume?.id || resume?._id } })}
               className="w-full bg-[#163C6B] text-white py-2.5 rounded-lg text-xs font-semibold hover:opacity-90 transition"
             >
               Generate Report

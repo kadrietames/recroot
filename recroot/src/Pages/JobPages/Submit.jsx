@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import DashboardLayout from '../../components/DashboardLayout'
-import { getMyResumes, applyForJob, createJob, uploadResume } from '../../api/recroot'
+import { getMyResumes, applyForJob, uploadResume } from '../../api/recroot'
 
 function Submit() {
   const navigate = useNavigate()
@@ -11,7 +11,10 @@ function Submit() {
   const [coverLetter, setCoverLetter] = useState('')
   const [resume, setResume] = useState(null)
   const [newFile, setNewFile] = useState(null)
-  const [loading, setLoading] = useState(false)
+  
+ 
+  const [submitLoading, setSubmitLoading] = useState(false)
+  const [uploadLoading, setUploadLoading] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -30,43 +33,55 @@ function Submit() {
   const handleFileChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
+    
     setNewFile(file)
-    setLoading(true)
+    setUploadLoading(true)
     setError('')
+    
     try {
       const uploaded = await uploadResume(file)
-      if (uploaded) setResume(uploaded)
+      
+      if (uploaded) {
+        setResume(uploaded.resume || uploaded)
+      }
     } catch (err) {
+      console.error('Resume upload error:', err)
       setError('Could not upload resume. Please try again.')
     } finally {
-      setLoading(false)
+      setUploadLoading(false)
     }
   }
 
   const handleSubmit = async () => {
-  setLoading(true)
-  setError('')
-  try {
-    const resumeId = resume?.id || resume?._id
-    if (!resumeId) {
-      setError('No resume found. Please upload your resume first.')
-      setLoading(false)
-      return
+    setSubmitLoading(true)
+    setError('')
+    
+    try {
+      const resumeId = resume?.id || resume?._id
+      if (!resumeId) {
+        setError('No resume found. Please upload your resume first.')
+        setSubmitLoading(false)
+        return
+      }
+
+      const jobId = job?.id || job?._id
+      if (!jobId) {
+        setError('Job context not found. Please go back and try again.')
+        setSubmitLoading(false)
+        return
+      }
+
+       
+      await applyForJob(jobId, resumeId, coverLetter)
+      
+      navigate('/jobs/success')
+    } catch (err) {
+      console.error('Application dispatch failure:', err)
+      setError(err.message || 'Application failed. Please try again.')
+    } finally {
+      setSubmitLoading(false)
     }
-    const jobId = job?.id || job?._id
-    if (!jobId) {
-      setError('Job not found. Please go back and try again.')
-      setLoading(false)
-      return
-    }
-    await applyForJob(jobId, resumeId)
-    navigate('/jobs/success')
-  } catch (err) {
-    setError(err.message || 'Application failed. Please try again.')
-  } finally {
-    setLoading(false)
   }
-}
 
   return (
     <DashboardLayout activePage="jobs">
@@ -74,9 +89,9 @@ function Submit() {
 
         <div className="w-full mb-5">
           <div className="mb-2">
-            <a href="#" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
+            <Link to="/dashboard" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-xs font-semibold transition-colors">
               <span className="text-sm">←</span> Back to Dashboard
-            </a>
+            </Link>
           </div>
           <h1 className="text-[#0f2537] text-xl sm:text-2xl font-bold tracking-tight mb-0.5">
             Application for {job?.title || 'Senior Product Designer'}
@@ -96,8 +111,8 @@ function Submit() {
               </p>
             </div>
             <label className="text-[#163C6B] text-xs font-semibold hover:opacity-70 transition cursor-pointer shrink-0">
-              {loading ? 'Uploading...' : 'Change'}
-              <input type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleFileChange} />
+              {uploadLoading ? 'Uploading...' : 'Change'}
+              <input type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleFileChange} disabled={uploadLoading} />
             </label>
           </div>
 
@@ -114,12 +129,12 @@ function Submit() {
 
           <button
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={submitLoading || uploadLoading}
             className={`w-full py-2.5 rounded-lg text-xs font-semibold transition text-white ${
-              loading ? 'bg-[#163C6B]/60 cursor-not-allowed' : 'bg-[#163C6B] hover:opacity-90'
+              submitLoading || uploadLoading ? 'bg-[#163C6B]/60 cursor-not-allowed' : 'bg-[#163C6B] hover:opacity-90 cursor-pointer'
             }`}
           >
-            {loading ? 'Submitting...' : 'Submit Application'}
+            {submitLoading ? 'Submitting Application...' : 'Submit Application'}
           </button>
         </div>
       </div>
