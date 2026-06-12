@@ -42,10 +42,10 @@ function UserTypes() {
             </li>
           </ul>
           
-          <button className="bg-accent text-white w-full sm:w-auto justify-center px-6 py-3 rounded-lg text-sm font-medium hover:opacity-90 transition duration-300 cursor-pointer flex items-center gap-2">
-            Join as Candidate 
+          <Link to="/signup" className="bg-accent text-white w-full sm:w-auto justify-center px-6 py-3 rounded-lg text-sm font-medium hover:opacity-90 transition duration-300 cursor-pointer flex items-center gap-2">
+            Join as Candidate
             <img src={arrow} alt="Arrow diagonal" className="w-4 h-4 object-contain" />
-          </button>
+          </Link>
         </div>
 
         
