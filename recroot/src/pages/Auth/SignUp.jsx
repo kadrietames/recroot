@@ -37,7 +37,7 @@ function SignUp() {
       } else {
         localStorage.setItem('userName', form.name)
         localStorage.setItem('userEmail', form.email)
-        navigate('/otp', { state: { email: form.email, name: form.name } })
+        navigate('/login')
       }
     } catch (err) {
       setError('Something went wrong. Please try again.')

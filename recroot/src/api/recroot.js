@@ -153,7 +153,9 @@ export const scoreResume = async (resumeId, jobDescription) => {
     headers: authHeaders(),
     body: JSON.stringify({ resumeId, jobDescription })
   })
-  return res.json()
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+  return data.data
 }
 
 // ===== INTERVIEWS =====
@@ -163,15 +165,20 @@ export const generateInterview = async (resumeId, jobDescription, jobRole) => {
     headers: authHeaders(),
     body: JSON.stringify({ resumeId, jobDescription, jobRole })
   })
-  return res.json()
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+  return data
 }
 
 export const getInterviews = async () => {
   const res = await fetch(`${BASE_URL}/interviews`, {
     headers: authHeaders()
   })
-  return res.json()
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+  return data
 }
+
 
 // ===== APPLICATIONS =====
 export const applyForJob = async (jobId, resumeId) => {

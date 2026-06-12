@@ -42,49 +42,20 @@ useEffect(() => {
   const circumference = 2 * Math.PI * radius
   const strokeDashoffset = circumference - (matchScore / 100) * circumference
 
-  const matchBreakdown = score?.breakdown
-    ? [
-        { label: 'Experience', value: score.breakdown.experience || 95 },
-        { label: 'Certification', value: score.breakdown.certification || 80 },
-        { label: 'Education', value: score.breakdown.education || 100 },
-        { label: 'Responsibilities', value: score.breakdown.responsibilities || 96 },
-        { label: 'Communication', value: score.breakdown.communication || 80 },
-        { label: 'Culture fit', value: score.breakdown.cultureFit || 90 },
-      ]
-    : [
-        { label: 'Experience', value: 95 },
-        { label: 'Certification', value: 80 },
-        { label: 'Education', value: 100 },
-        { label: 'Responsibilities', value: 96 },
-        { label: 'Communication', value: 80 },
-        { label: 'Culture fit', value: 90 },
-      ]
+  const matchBreakdown = [
+  { label: 'Match Score', value: score?.matchScore || 0 },
+]
 
-  const keyStrengths = score?.keyStrengths?.length > 0
-    ? score.keyStrengths
-    : [
-        '2 years of experience',
-        'Good communication skills',
-        'Problem solving skills',
-        'Good leadership skill',
-        'Strong work ethic',
-        'Technical know how',
-      ]
+const keyStrengths = score?.matchedSkills?.length > 0
+  ? score.matchedSkills
+  : []
 
-  const jobRequirements = score?.requirements?.length > 0
-    ? score.requirements
-    : [
-        'User Research',
-        'Soft Skills',
-        'Communication',
-        'Ideation',
-        'Facilitation',
-        'Prototyping',
-      ]
+const jobRequirements = score?.missingSkills?.length > 0
+  ? score.missingSkills
+  : []
 
-  const mustHaveSkills = score?.mustHaveSkills || 6
-  const totalSkills = score?.totalSkills || 10
-
+const mustHaveSkills = score?.matchedSkills?.length || 0
+const totalSkills = (score?.matchedSkills?.length || 0) + (score?.missingSkills?.length || 0)
   const handleSaveJob = () => {
     
     console.log('Saving job reference target context:', job?.id)
